@@ -1,7 +1,7 @@
 [build]
   command = """
-    pip install --upgrade pip &&
-    pip install -r requirements.txt &&
+    python3.8 -m pip install --upgrade pip &&
+    python3.8 -m pip install -r requirements.txt &&
     mkdir -p netlify/functions &&
     cp -r templates static netlify/functions/
   """
@@ -9,7 +9,7 @@
   functions = "netlify/functions"
 
 [build.environment]
-  PYTHON_VERSION = "3.8"
+  PYTHON_VERSION = "3.8.12"
 
 [[redirects]]
   from = "/*"
