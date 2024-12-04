@@ -1,0 +1,183 @@
+/* Variables de colores */
+:root {
+    --primary-color: #2c3e50;
+    --secondary-color: #34495e;
+    --accent-color: #3498db;
+    --success-color: #2ecc71;
+    --warning-color: #f1c40f;
+    --danger-color: #e74c3c;
+    --light-gray: #f5f6fa;
+    --border-color: #dcdde1;
+  }
+  
+  /* Estilos generales */
+  body {
+    background-color: var(--light-gray);
+    font-family: 'Roboto', sans-serif;
+  }
+  
+  .container {
+    max-width: 1200px;
+    padding: 2rem;
+  }
+  
+  /* Header y navegación */
+  .navbar {
+    background-color: #1e3d59;
+    padding: 1rem 0;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  }
+  
+  .navbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 0;
+  }
+  
+  .logo-epm, .logo-cruz-roja {
+    height: 60px;
+    width: auto;
+    transition: transform 0.3s ease;
+  }
+  
+  .logo-epm:hover, .logo-cruz-roja:hover {
+    transform: scale(1.05);
+  }
+  
+  .navbar-title {
+    color: white;
+    font-size: 2.5rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    margin-left: 1.5rem;
+    text-transform: uppercase;
+    background: linear-gradient(45deg, #ffffff, #f0f0f0);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+  }
+  
+  /* Estilos del formulario */
+  .form-header {
+    background: linear-gradient(135deg, #1a237e 0%, #0d47a1 100%);
+    color: white;
+    padding: 2rem;
+    border-radius: 10px;
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+  
+  .form-header h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+  }
+  
+  .form-header p {
+    font-size: 1.1rem;
+    opacity: 0.9;
+  }
+  
+  .card {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+    transition: transform 0.2s;
+  }
+  
+  .card:hover {
+    transform: translateY(-5px);
+  }
+  
+  .card-header {
+    background-color: var(--primary-color);
+    color: white;
+    border-radius: 10px 10px 0 0 !important;
+    padding: 1rem;
+  }
+  
+  .card-body {
+    padding: 2rem;
+  }
+  
+  /* Estilos de los inputs */
+  .form-label {
+    font-weight: 500;
+    color: var(--secondary-color);
+  }
+  
+  .form-select, .form-control {
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    padding: 0.75rem;
+    transition: all 0.3s;
+  }
+  
+  .form-select:focus, .form-control:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+  }
+  
+  /* Botones */
+  .btn {
+    padding: 0.75rem 2rem;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.3s;
+  }
+  
+  .btn-primary {
+    background-color: var(--accent-color);
+    border: none;
+  }
+  
+  .btn-primary:hover {
+    background-color: #2980b9;
+    transform: translateY(-2px);
+  }
+  
+  .btn-secondary {
+    background-color: var(--secondary-color);
+    border: none;
+  }
+  
+  /* Indicadores de progreso */
+  .progress-indicator {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background: white;
+    border-radius: 10px;
+  }
+  
+  .progress-step {
+    text-align: center;
+    position: relative;
+    flex: 1;
+  }
+  
+  .progress-step.active {
+    color: var(--accent-color);
+  }
+  
+  /* Responsive */
+  @media (max-width: 768px) {
+    .container {
+      padding: 1rem;
+    }
+    
+    .card-body {
+      padding: 1rem;
+    }
+    
+    .logo-epm, .logo-cruz-roja {
+      height: 45px;
+    }
+    
+    .navbar-title {
+      font-size: 1.8rem;
+      margin-left: 1rem;
+    }
+  } 

@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Registros de Infraestructuras</h2>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Central</th>
+                    <th>Infraestructura</th>
+                    <th>Fecha</th>
+                    <th>Número de Pisos</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for infra in infraestructuras %}
+                <tr>
+                    <td>{{ infra.id }}</td>
+                    <td>{{ infra.central }}</td>
+                    <td>{{ infra.nombre }}</td>
+                    <td>{{ infra.fecha }}</td>
+                    <td>{{ infra.numero_pisos }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <a href="/exportar_excel" class="btn btn-success">Exportar a Excel</a>
+</div>
+{% endblock %}
