@@ -1,7 +1,9 @@
 [build]
   command = """
     pip install -r requirements.txt &&
-    mkdir -p netlify/functions
+    mkdir -p netlify/functions &&
+    cp -r templates static netlify/functions/ &&
+    cp app.py netlify/functions/
   """
   publish = "."
   functions = "netlify/functions"
@@ -16,3 +18,13 @@
   to = "/.netlify/functions/app"
   status = 200
   force = true
+
+[[redirects]]
+  from = "/static/*"
+  to = "/static/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/app/:splat"
+  status = 200

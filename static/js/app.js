@@ -10,7 +10,7 @@ document.getElementById('infraForm').addEventListener('submit', async (e) => {
     }
     
     try {
-        const response = await fetch('/guardar', {
+        const response = await fetch('/.netlify/functions/app/guardar', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
