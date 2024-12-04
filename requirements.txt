@@ -10,4 +10,3 @@ Flask-Session
 mysqlclient
 gunicorn
 python-dotenv
-netlify-lambda
