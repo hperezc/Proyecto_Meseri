@@ -1,12 +1,18 @@
 [build]
-  command = "pip install -r requirements.txt"
+  command = """
+    pip install -r requirements.txt &&
+    mkdir -p netlify/functions
+  """
   publish = "."
-  functions = "functions"
+  functions = "netlify/functions"
 
 [build.environment]
   PYTHON_VERSION = "3.9"
+  DATABASE_URL = "mysql://hperezc97:geoHCP97@mysql-hperezc97.alwaysdata.net/hperezc97_meseribd"
+  SECRET_KEY = "d978422048d1ad28cf337105b9dc5bad"
 
 [[redirects]]
   from = "/*"
   to = "/.netlify/functions/app"
   status = 200
+  force = true
