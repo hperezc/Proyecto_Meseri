@@ -8,6 +8,10 @@ import os
 from pathlib import Path
 from functools import wraps
 from dotenv import load_dotenv
+from dash import Dash
+from dashboard.layout import create_layout
+from dashboard.callbacks import init_callbacks
+import dash_bootstrap_components as dbc
 
 load_dotenv()
 
@@ -390,7 +394,78 @@ def test_db_connection():
             print(f"Error al conectar con la base de datos: {str(e)}")
             return False
 
+def init_dashboard(server):
+    with server.app_context():
+        dash_app = Dash(
+            __name__,
+            server=server,
+            url_base_pathname='/dashboard/',
+            external_stylesheets=[dbc.themes.BOOTSTRAP]
+        )
+        
+        index_string = '''
+        <!DOCTYPE html>
+        <html lang="es">
+        <head>
+            {%metas%}
+            <title>Dashboard MESERI</title>
+            {%css%}
+            <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+            <link rel="stylesheet" href="/static/css/styles.css">
+            <style>
+                .dash-container {
+                    padding: 2rem 1rem;
+                    background-color: #f8f9fa;
+                }
+                .card {
+                    border-radius: 10px;
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                }
+                .card-header {
+                    border-radius: 10px 10px 0 0 !important;
+                }
+                .dash-dropdown {
+                    border-radius: 5px;
+                }
+                .DateInput_input {
+                    border-radius: 5px;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="dash-container">
+                {%app_entry%}
+            </div>
+            {%config%}
+            {%scripts%}
+            {%renderer%}
+        </body>
+        </html>
+        '''
+        
+        dash_app.index_string = index_string
+        dash_app.layout = create_layout()
+        init_callbacks(dash_app, db, Infraestructura)
+        
+        return dash_app
+
+# Agregar después de crear la app Flask
+dash_app = init_dashboard(app)
+
+@app.route('/debug_data')
+def debug_data():
+    infraestructuras = Infraestructura.query.all()
+    data = []
+    for infra in infraestructuras:
+        data.append({
+            'id': infra.id,
+            'central': infra.central,
+            'nombre': infra.nombre,
+            'fecha': infra.fecha.strftime('%Y-%m-%d %H:%M:%S')
+        })
+    return jsonify(data)
+
 if __name__ == '__main__':
-    init_db()  # Inicializar la base de datos antes de ejecutar la aplicación
+    init_db()
     test_db_connection()
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
