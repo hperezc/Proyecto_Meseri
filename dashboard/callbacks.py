@@ -323,7 +323,7 @@ def init_callbacks(app, db, Infraestructura):
                         
                         # Protección
                         parametros['Parámetro'].extend([
-                            'Extintores Portátiles', 'Bocas de Incendio', 'Hidrantes Exteriores',
+                            'Extintores Portátiles', 'Gabinetes/Tomas de mangueras', 'Hidrantes Exteriores',
                             'Detección Automática', 'Rociadores Automáticos', 
                             'Equipos Primera Intervención', 'Equipos Segunda Intervención',
                             'Planes de Emergencia'
@@ -542,51 +542,106 @@ def create_table(df):
             {"name": "Central", "id": "central"},
             {"name": "Fecha", "id": "fecha"},
             {"name": "Valor P", "id": "p"},
-            {"name": "Nivel Riesgo MESERI", "id": "nivel_riesgo"},
-            {"name": "Nivel Riesgo EPM", "id": "epm_risk_level"}
+            {"name": "Nivel Riesgo", "id": "nivel_riesgo"},
+            {"name": "Riesgo EPM", "id": "epm_risk_level"}
         ],
+        style_table={
+            'overflowX': 'auto',
+            'minWidth': '100%',
+        },
+        style_cell={
+            'textAlign': 'left',
+            'padding': '8px',
+            'minWidth': '100px',
+            'maxWidth': '180px',
+            'whiteSpace': 'normal',
+            'height': 'auto',
+            'overflow': 'hidden',
+            'textOverflow': 'ellipsis',
+        },
+        style_header={
+            'backgroundColor': 'rgb(230, 230, 230)',
+            'fontWeight': 'bold',
+            'textAlign': 'center',
+            'padding': '10px',
+        },
         style_data_conditional=[
-            # Estilos para nivel de riesgo EPM
             {
-                'if': {'column_id': 'epm_risk_level', 'filter_query': '{epm_risk_level} = "Aceptable"'},
-                'backgroundColor': '#28a745',
+                'if': {'row_index': 'odd'},
+                'backgroundColor': 'rgb(248, 248, 248)'
+            },
+            # Colores para Nivel Riesgo MESERI
+            {
+                'if': {
+                    'column_id': 'nivel_riesgo',
+                    'filter_query': '{nivel_riesgo} = "Riesgo Muy Alto"'
+                },
+                'backgroundColor': '#ff0000',
                 'color': 'white'
             },
             {
-                'if': {'column_id': 'epm_risk_level', 'filter_query': '{epm_risk_level} = "Tolerable"'},
-                'backgroundColor': '#ffc107',
-                'color': 'black'
-            },
-            {
-                'if': {'column_id': 'epm_risk_level', 'filter_query': '{epm_risk_level} = "Alto"'},
-                'backgroundColor': '#fd7e14',
+                'if': {
+                    'column_id': 'nivel_riesgo',
+                    'filter_query': '{nivel_riesgo} = "Riesgo Alto"'
+                },
+                'backgroundColor': '#ff8c00',
                 'color': 'white'
             },
             {
-                'if': {'column_id': 'epm_risk_level', 'filter_query': '{epm_risk_level} = "Extremo"'},
-                'backgroundColor': '#dc3545',
+                'if': {
+                    'column_id': 'nivel_riesgo',
+                    'filter_query': '{nivel_riesgo} = "Riesgo Medio"'
+                },
+                'backgroundColor': '#ffd700'
+            },
+            {
+                'if': {
+                    'column_id': 'nivel_riesgo',
+                    'filter_query': '{nivel_riesgo} = "Riesgo Bajo"'
+                },
+                'backgroundColor': '#008000',
                 'color': 'white'
             },
-            # Estilos para nivel de riesgo MESERI
+            # Colores para Riesgo EPM
             {
-                'if': {'column_id': 'nivel_riesgo', 'filter_query': '{nivel_riesgo} = "Riesgo Bajo"'},
-                'backgroundColor': '#28a745',
+                'if': {
+                    'column_id': 'epm_risk_level',
+                    'filter_query': '{epm_risk_level} = "Extremo"'
+                },
+                'backgroundColor': '#ff0000',  # Mismo rojo que Riesgo Muy Alto
                 'color': 'white'
             },
             {
-                'if': {'column_id': 'nivel_riesgo', 'filter_query': '{nivel_riesgo} = "Riesgo Medio"'},
-                'backgroundColor': '#ffc107',
-                'color': 'black'
-            },
-            {
-                'if': {'column_id': 'nivel_riesgo', 'filter_query': '{nivel_riesgo} = "Riesgo Alto"'},
-                'backgroundColor': '#fd7e14',
+                'if': {
+                    'column_id': 'epm_risk_level',
+                    'filter_query': '{epm_risk_level} = "Alto"'
+                },
+                'backgroundColor': '#ff8c00',  # Mismo naranja que Riesgo Alto
                 'color': 'white'
             },
             {
-                'if': {'column_id': 'nivel_riesgo', 'filter_query': '{nivel_riesgo} = "Riesgo Muy Alto"'},
-                'backgroundColor': '#dc3545',
+                'if': {
+                    'column_id': 'epm_risk_level',
+                    'filter_query': '{epm_risk_level} = "Tolerable"'
+                },
+                'backgroundColor': '#ffd700'  # Mismo amarillo que Riesgo Medio
+            },
+            {
+                'if': {
+                    'column_id': 'epm_risk_level',
+                    'filter_query': '{epm_risk_level} = "Aceptable"'
+                },
+                'backgroundColor': '#008000',  # Mismo verde que Riesgo Bajo
                 'color': 'white'
             }
-        ]
+        ],
+        css=[{
+            'selector': '.dash-table-container',
+            'rule': 'max-width: 100%; margin: 0 auto;'
+        }],
+        page_size=10,
+        page_action='native',
+        sort_action='native',
+        sort_mode='multi',
+        filter_action='native'
     )
