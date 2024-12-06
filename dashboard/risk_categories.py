@@ -1,12 +1,12 @@
-def get_epm_risk_level(p_value):
-    if p_value >= 7.0:
-        return "Aceptable"
-    elif 5.0 <= p_value < 7.0:
-        return "Tolerable"
-    elif 3.0 <= p_value < 5.0:
-        return "Alto"
+def get_epm_risk_level(p):
+    if p >= 8:
+        return "Aceptable"     # Para Riesgo Bajo
+    elif 5 <= p < 8:
+        return "Tolerable"     # Para Riesgo Medio
+    elif 3 <= p < 5:
+        return "Alto"          # Para Riesgo Alto
     else:
-        return "Extremo"
+        return "Extremo"       # Para Riesgo Muy Alto
 
 def get_epm_risk_color(risk_level):
     colors = {

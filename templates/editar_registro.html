@@ -152,6 +152,35 @@
                             <option value="alto" {% if registro.orden_limpieza == 'alto' %}selected{% endif %}>Alto</option>
                         </select>
                     </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Almacenamiento en altura</label>
+                        <select class="form-select" name="almacenamiento_altura" required>
+                            <option value="">Seleccione...</option>
+                            <option value="menor2" {% if registro.almacenamiento_altura == 'menor2' %}selected{% endif %}>Menor de 2m</option>
+                            <option value="2-6" {% if registro.almacenamiento_altura == '2-6' %}selected{% endif %}>Entre 2 y 6m</option>
+                            <option value="mayor6" {% if registro.almacenamiento_altura == 'mayor6' %}selected{% endif %}>Mayor de 6m</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Factores de Valor Económico -->
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Factores de Valor Económico</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Concentración de valores</label>
+                        <select class="form-select" name="concentracion_valores" required>
+                            <option value="">Seleccione...</option>
+                            <option value="inferior2.6" {% if registro.concentracion_valores == 'inferior2.6' %}selected{% endif %}>Inferior a 2.6 COP MILL/m²</option>
+                            <option value="entre2.6-6.5" {% if registro.concentracion_valores == 'entre2.6-6.5' %}selected{% endif %}>Entre 2.6 y 6.5 COP MILL/m²</option>
+                            <option value="superior6.5" {% if registro.concentracion_valores == 'superior6.5' %}selected{% endif %}>Superior a 6.5 COP MILL/m²</option>
+                        </select>
+                    </div>
                 </div>
             </div>
         </div>

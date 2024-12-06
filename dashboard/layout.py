@@ -33,29 +33,26 @@ def create_layout():
         # Header con logos
         dbc.Row([
             dbc.Col(
-                html.Img(src="/static/img/logo-epm.png", height="60px", className="header-logo me-3"),
-                width=3,
-                className="d-flex align-items-center justify-content-end"
-            ),
-            dbc.Col(
                 html.H1("Dashboard MESERI",
-                       className="text-center mb-0",
+                       className="text-center mb-0 header-title",
                        style={
                            'color': '#1e3d59',
                            'font-weight': 'bold',
-                           'font-size': '2.5rem',
                            'text-transform': 'uppercase',
                            'letter-spacing': '2px'
                        }),
-                width=6,
+                width=12,
                 className="d-flex align-items-center justify-content-center"
             ),
             dbc.Col(
-                html.Img(src="/static/img/logo-cruz-roja.png", height="60px", className="ms-3"),
-                width=3,
-                className="d-flex align-items-center"
+                [
+                    html.Img(src="/static/img/logo-epm.png", height="60px", className="header-logo me-3"),
+                    html.Img(src="/static/img/logo-cruz-roja.png", height="60px", className="header-logo")
+                ],
+                width=12,
+                className="d-flex align-items-center justify-content-center mt-3"
             ),
-        ], className="mb-4"),
+        ], className="mb-4 header"),
 
         dcc.Interval(
             id='interval-component',
@@ -183,6 +180,7 @@ def create_layout():
         
         # Gráficos Principales con tooltips
         dbc.Row([
+            # Indicador de Riesgo Global
             dbc.Col([
                 dbc.Card([
                     dbc.CardHeader(
@@ -206,12 +204,14 @@ def create_layout():
                     dbc.CardBody([
                         dcc.Graph(
                             id='gauge-chart',
-                            style={'background-color': 'white'}
+                            style={'background-color': 'white'},
+                            config={'responsive': True}
                         )
                     ], style={'background-color': 'white'})
                 ], style=card_style)
-            ], width=6),
+            ], xs=12, sm=12, md=6, className="mb-4"),
             
+            # Distribución de Niveles de Riesgo
             dbc.Col([
                 dbc.Card([
                     dbc.CardHeader(
@@ -233,10 +233,13 @@ def create_layout():
                         style=card_header_style
                     ),
                     dbc.CardBody([
-                        dcc.Graph(id='factors-pie-chart')
+                        dcc.Graph(
+                            id='factors-pie-chart',
+                            config={'responsive': True}
+                        )
                     ])
                 ], className="mb-4")
-            ], width=6)
+            ], xs=12, sm=12, md=6)
         ]),
         
         # Análisis Detallado con tooltips

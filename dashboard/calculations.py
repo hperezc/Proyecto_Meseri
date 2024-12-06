@@ -111,6 +111,11 @@ def get_process_coefficient(data):
             'alto': 10,
             'medio': 5,
             'bajo': 0
+        },
+        'almacenamiento_altura': {
+            'menor2': 3,
+            '2-6': 2,
+            'mayor6': 0
         }
     }
     
@@ -123,9 +128,9 @@ def get_process_coefficient(data):
 def get_concentration_coefficient(data):
     coeficientes = {
         'concentracion_valores': {
-            'menor500': 3,
-            '500-1500': 2,
-            'mayor1500': 0
+            'inferior2.6': 3,
+            'entre2.6-6.5': 2,
+            'superior6.5': 0
         }
     }
     
@@ -211,18 +216,18 @@ def get_protection_coefficient(data):
         },
         'rociadores_automaticos': {
             'sin_vigilancia_sin_cra': 5,
-            'sin_vigilancia_con_cra': 7,
-            'con_vigilancia_sin_cra': 8,
-            'con_vigilancia_con_cra': 10,
+            'sin_vigilancia_con_cra': 6,
+            'con_vigilancia_sin_cra': 7,
+            'con_vigilancia_con_cra': 8,
             'no': 0
         },
         'equipos_primera_intervencion': {
             'sin_vigilancia': 2,
-            'con_vigilancia': 4,
+            'con_vigilancia': 2,
             'no': 0
         },
         'equipos_segunda_intervencion': {
-            'sin_vigilancia': 2,
+            'sin_vigilancia': 4,
             'con_vigilancia': 4,
             'no': 0
         },
@@ -307,6 +312,11 @@ def get_process_weight(factor, value):
             'alto': 10,
             'medio': 5,
             'bajo': 0
+        },
+        'almacenamiento_altura': {
+            'menor2': 3,
+            '2-6': 2,
+            'mayor6': 0
         }
     }
     return weights.get(factor, {}).get(value, 0)
@@ -314,9 +324,9 @@ def get_process_weight(factor, value):
 def get_concentration_weight(factor, value):
     weights = {
         'concentracion_valores': {
-            'menor500': 3,
-            '500-1500': 2,
-            'mayor1500': 0
+            'inferior2.6': 3,
+            'entre2.6-6.5': 2,
+            'superior6.5': 0
         }
     }
     return weights.get(factor, {}).get(value, 0)
@@ -387,18 +397,18 @@ def get_protection_weight(factor, value):
         },
         'rociadores_automaticos': {
             'sin_vigilancia_sin_cra': 5,
-            'sin_vigilancia_con_cra': 7,
-            'con_vigilancia_sin_cra': 8,
-            'con_vigilancia_con_cra': 10,
+            'sin_vigilancia_con_cra': 6,
+            'con_vigilancia_sin_cra': 7,
+            'con_vigilancia_con_cra': 8,
             'no': 0
         },
         'equipos_primera_intervencion': {
             'sin_vigilancia': 2,
-            'con_vigilancia': 4,
+            'con_vigilancia': 2,
             'no': 0
         },
         'equipos_segunda_intervencion': {
-            'sin_vigilancia': 2,
+            'sin_vigilancia': 4,
             'con_vigilancia': 4,
             'no': 0
         },

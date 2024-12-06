@@ -319,3 +319,14 @@
   .header-logo:hover {
     transform: scale(1.05);
   }
+  
+  @media (max-width: 768px) {
+    #comparison-chart {
+        margin-bottom: 40px !important;
+    }
+    
+    #comparison-chart .js-plotly-plot .legend {
+        position: relative !important;
+        margin-top: 20px !important;
+    }
+  }

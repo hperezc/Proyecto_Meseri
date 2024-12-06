@@ -282,7 +282,7 @@ def init_callbacks(app, db, Infraestructura):
                         ])
                         
                         # Procesos
-                        parametros['Parámetro'].extend(['Peligro de Activación', 'Carga de Fuego', 'Combustibilidad',
+                        parametros['Parámetro'].extend(['Peligro de Activación', 'Carga de Fuego', 'Inflamabilidad',
                                                       'Orden y Limpieza', 'Almacenamiento en Altura'])
                         parametros['Valor'].extend([data['peligro_activacion'], data['carga_fuego'],
                                                  data['combustibilidad'], data['orden_limpieza'],
@@ -395,29 +395,62 @@ def create_gauge_chart(df):
             bgcolor="white",
             font_size=12,
             font_family="Roboto"
-        )
+        ),
+        margin=dict(l=30, r=30, t=50, b=30),
+        height=300,
+        autosize=True
     )
     return fig
 
+# Actualiza el diccionario para incluir "Riesgo" en las claves
+COLORES_RIESGO = {
+    'Riesgo Bajo': '#008000',      # Verde más oscuro
+    'Riesgo Medio': '#ffd700',     # Amarillo más vivo
+    'Riesgo Alto': '#ff8c00',      # Naranja más intenso
+    'Riesgo Muy Alto': '#ff0000'   # Rojo más brillante
+}
+
+
 def create_pie_chart(df):
-    fig = px.pie(
-        names=df['nivel_riesgo'].value_counts().index,
-        values=df['nivel_riesgo'].value_counts().values,
-        title="Distribución de Niveles de Riesgo por Categoría",
-        color_discrete_map={
-            'Riesgo Muy Alto': 'red',
-            'Riesgo Alto': 'orange',
-            'Riesgo Medio': 'yellow',
-            'Riesgo Bajo': 'green'
-        }
-    )
-    fig.update_traces(
+    value_counts = df['nivel_riesgo'].value_counts()
+    
+    fig = go.Figure(data=[go.Pie(
+        labels=value_counts.index,
+        values=value_counts.values,
+        marker=dict(colors=[COLORES_RIESGO[nivel] for nivel in value_counts.index]),
         textposition='inside',
-        textinfo='percent+label',
+        textinfo='percent',  # Solo mostrar porcentajes
+        hole=0.3,
         hovertemplate="<b>%{label}</b><br>" +
                      "Cantidad: %{value}<br>" +
                      "Porcentaje: %{percent:.1%}<extra></extra>"
+    )])
+    
+    fig.update_layout(
+        title="Distribución de Niveles de Riesgo",
+        legend=dict(
+            orientation="h",
+            yanchor="top",
+            y=-0.2,
+            xanchor="center",
+            x=0.5,
+            bgcolor='rgba(255,255,255,0.9)',
+            bordercolor='rgba(0,0,0,0.1)',
+            borderwidth=1
+        ),
+        margin=dict(
+            l=10,
+            r=10, 
+            t=30,
+            b=50
+        ),
+        height=300,
+        autosize=True,
+        showlegend=True,
+        paper_bgcolor='rgba(0,0,0,0)',
+        plot_bgcolor='rgba(0,0,0,0)'
     )
+    
     return fig
 
 def create_heatmap(df):
@@ -437,7 +470,6 @@ def create_heatmap(df):
     ))
 
 def create_comparison_chart(df):
-    # Crear gráfico de barras comparativo entre centrales
     fig = go.Figure()
     
     centrales = df['central'].unique()
@@ -463,11 +495,39 @@ def create_comparison_chart(df):
         marker_color='green'
     ))
     
+    # Configuración responsiva para la leyenda y márgenes
+    legend_config = dict(
+        orientation="h",
+        yanchor="top",
+        y=-0.35,
+        xanchor="center",
+        x=0.5,
+        bgcolor='rgba(255,255,255,0.9)',
+        bordercolor='rgba(0,0,0,0.1)',
+        borderwidth=1
+    )
+    
+    margin_config = dict(
+        l=10,
+        r=10,
+        t=30,
+        b=80
+    )
+    
+    # Ajustar configuración para móviles
+    if len(centrales) > 2:  # Si hay más de 2 centrales, probablemente necesite más espacio en móvil
+        legend_config['y'] = -0.5  # Más espacio para la leyenda en móvil
+        margin_config['b'] = 120   # Más espacio inferior en móvil
+    
     fig.update_layout(
         title="Comparativa entre Centrales",
         barmode='group',
         yaxis_title="Valor",
-        xaxis_title="Central"
+        xaxis_title="Central",
+        legend=legend_config,
+        margin=margin_config,
+        height=400 if len(centrales) > 2 else 350,  # Altura aumentada para móviles con muchas centrales
+        autosize=True
     )
     
     return fig
@@ -486,6 +546,7 @@ def create_table(df):
             {"name": "Nivel Riesgo EPM", "id": "epm_risk_level"}
         ],
         style_data_conditional=[
+            # Estilos para nivel de riesgo EPM
             {
                 'if': {'column_id': 'epm_risk_level', 'filter_query': '{epm_risk_level} = "Aceptable"'},
                 'backgroundColor': '#28a745',
@@ -505,19 +566,27 @@ def create_table(df):
                 'if': {'column_id': 'epm_risk_level', 'filter_query': '{epm_risk_level} = "Extremo"'},
                 'backgroundColor': '#dc3545',
                 'color': 'white'
+            },
+            # Estilos para nivel de riesgo MESERI
+            {
+                'if': {'column_id': 'nivel_riesgo', 'filter_query': '{nivel_riesgo} = "Riesgo Bajo"'},
+                'backgroundColor': '#28a745',
+                'color': 'white'
+            },
+            {
+                'if': {'column_id': 'nivel_riesgo', 'filter_query': '{nivel_riesgo} = "Riesgo Medio"'},
+                'backgroundColor': '#ffc107',
+                'color': 'black'
+            },
+            {
+                'if': {'column_id': 'nivel_riesgo', 'filter_query': '{nivel_riesgo} = "Riesgo Alto"'},
+                'backgroundColor': '#fd7e14',
+                'color': 'white'
+            },
+            {
+                'if': {'column_id': 'nivel_riesgo', 'filter_query': '{nivel_riesgo} = "Riesgo Muy Alto"'},
+                'backgroundColor': '#dc3545',
+                'color': 'white'
             }
-        ],
-        style_header={
-            'backgroundColor': '#1e3d59',
-            'color': 'white',
-            'fontWeight': 'bold'
-        },
-        style_data={
-            'whiteSpace': 'normal',
-            'height': 'auto',
-        },
-        page_size=10,
-        sort_action='native',
-        filter_action='native',
-        style_table={'overflowX': 'auto'}
+        ]
     )
