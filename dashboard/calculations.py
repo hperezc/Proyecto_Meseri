@@ -59,13 +59,13 @@ def calculate_meseri_score(data):
 
 def get_risk_level(p):
     if p <= 3:
-        return "Riesgo Muy Alto"
+        return "Muy Alto"
     elif p <= 5:
-        return "Riesgo Alto"
+        return "Alto"
     elif p <= 8:
-        return "Riesgo Medio"
+        return "Medio"
     else:
-        return "Riesgo Bajo"
+        return "Bajo"
 
 def get_situation_coefficient(data):
     coeficientes = {

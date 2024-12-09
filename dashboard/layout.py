@@ -145,11 +145,11 @@ def create_layout():
                 ]),
                 dbc.Tooltip(
                     [
-                        html.P("Métricas clave del análisis de riesgo MESERI:", className="mb-2"),
+                        html.P("Métricas clave del análisis de probabilidad MESERI:", className="mb-2"),
                         html.Ul([
                             html.Li("Total de infraestructuras evaluadas"),
-                            html.Li("Promedio general de riesgo"),
-                            html.Li("Infraestructuras con mayor y menor riesgo")
+                            html.Li("Promedio general de probabilidad"),
+                            html.Li("Infraestructuras con mayor y menor probabilidad")
                         ], className="mb-0")
                     ],
                     target="summary-info",
@@ -163,15 +163,15 @@ def create_layout():
                         html.H2(id='total-infra', className="text-center")
                     ], width=3),
                     dbc.Col([
-                        html.H4("Riesgo Promedio", className="text-center"),
+                        html.H4("Probabilidad Promedio", className="text-center"),
                         html.H2(id='riesgo-promedio', className="text-center")
                     ], width=3),
                     dbc.Col([
-                        html.H4("Mayor Riesgo", className="text-center"),
+                        html.H4("Mayor Probabilidad", className="text-center"),
                         html.H2(id='mayor-riesgo', className="text-center")
                     ], width=3),
                     dbc.Col([
-                        html.H4("Menor Riesgo", className="text-center"),
+                        html.H4("Menor Probabilidad", className="text-center"),
                         html.H2(id='menor-riesgo', className="text-center")
                     ], width=3)
                 ])
@@ -185,12 +185,12 @@ def create_layout():
                 dbc.Card([
                     dbc.CardHeader(
                         dbc.Row([
-                            dbc.Col(html.H4("Indicador de Riesgo Global", className="mb-0"), width=11),
+                            dbc.Col(html.H4("Indicador de Probabilidad Global", className="mb-0"), width=11),
                             dbc.Col(
                                 [
                                     html.I(className="fas fa-info-circle", id="gauge-info"),
                                     dbc.Tooltip(
-                                        "Medidor que muestra el nivel de riesgo promedio de todas las instalaciones",
+                                        "Medidor que muestra el nivel de probabilidad promedio de todas las instalaciones",
                                         target="gauge-info",
                                         placement="top"
                                     )
@@ -216,12 +216,12 @@ def create_layout():
                 dbc.Card([
                     dbc.CardHeader(
                         dbc.Row([
-                            dbc.Col(html.H4("Distribución de Niveles de Riesgo", className="mb-0"), width=11),
+                            dbc.Col(html.H4("Distribución de Niveles de Probabilidad", className="mb-0"), width=11),
                             dbc.Col(
                                 [
                                     html.I(className="fas fa-info-circle", id="pie-info"),
                                     dbc.Tooltip(
-                                        "Distribución porcentual de los diferentes niveles de riesgo",
+                                        "Distribución porcentual de los diferentes niveles de probabilidad",
                                         target="pie-info",
                                         placement="top"
                                     )
@@ -248,12 +248,12 @@ def create_layout():
                 dbc.Card([
                     dbc.CardHeader(
                         dbc.Row([
-                            dbc.Col(html.H4("Mapa de Calor - Factores de Riesgo", className="mb-0"), width=11),
+                            dbc.Col(html.H4("Mapa de Calor - Factores de Probabilidad", className="mb-0"), width=11),
                             dbc.Col(
                                 [
                                     html.I(className="fas fa-info-circle", id="heatmap-info"),
                                     dbc.Tooltip(
-                                        "Visualización de la intensidad de los factores de riesgo por infraestructura",
+                                        "Visualización de la intensidad de los factores de probabilidad por infraestructura",
                                         target="heatmap-info",
                                         placement="top"
                                     )
@@ -281,7 +281,7 @@ def create_layout():
                                 [
                                     html.I(className="fas fa-info-circle", id="comparison-info"),
                                     dbc.Tooltip(
-                                        "Análisis comparativo de riesgos entre diferentes centrales",
+                                        "Análisis comparativo de probabilidades entre diferentes centrales",
                                         target="comparison-info",
                                         placement="top"
                                     )

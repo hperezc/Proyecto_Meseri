@@ -1,18 +1,18 @@
 def get_epm_risk_level(p):
     if p >= 8:
-        return "Aceptable"     # Para Riesgo Bajo
+        return "Baja"     # Para probabilidad Baja
     elif 5 <= p < 8:
-        return "Tolerable"     # Para Riesgo Medio
+        return "Media"     # Para probabilidad Media
     elif 3 <= p < 5:
-        return "Alto"          # Para Riesgo Alto
+        return "Alta"          # Para probabilidad Alta
     else:
-        return "Extremo"       # Para Riesgo Muy Alto
+        return "Muy Alta"       # Para probabilidad Muy Alta
 
 def get_epm_risk_color(risk_level):
     colors = {
-        "Aceptable": "#28a745",  # Verde
-        "Tolerable": "#ffc107",  # Amarillo
-        "Alto": "#fd7e14",      # Naranja
-        "Extremo": "#dc3545"    # Rojo
+        "baja": "#28a745",  # Verde
+        "media": "#ffc107",  # Amarillo
+        "Alta": "#fd7e14",      # Naranja
+        "Muy Alta": "#dc3545"    # Rojo
     }
     return colors.get(risk_level, "#6c757d")  # Gris por defecto 

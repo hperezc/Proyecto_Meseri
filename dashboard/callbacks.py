@@ -243,8 +243,8 @@ def init_callbacks(app, db, Infraestructura):
                             'Factores Agravantes (X)': score['x'],
                             'Factores Protectores (Y)': score['y'],
                             'Valoración Final (P)': score['p'],
-                            'Nivel de Riesgo Meseri': score['risk_level'],
-                            'Categoría de Riesgo EPM': get_epm_risk_level(score['p'])
+                            'Probabilidad MESERI': score['risk_level'],
+                            'Probabilidad EPM': get_epm_risk_level(score['p'])
                         })
                     
                     df_resumen = pd.DataFrame(resumen_data)
@@ -350,8 +350,8 @@ def init_callbacks(app, db, Infraestructura):
                             'Total Factores Agravantes (X)', 
                             'Total Factores Protectores (Y)',
                             'Valoración Final (P)', 
-                            'Nivel de Riesgo Meseri',
-                            'Categoría de Riesgo EPM'
+                            'Probabilidad MESERI',
+                            'Probabilidad EPM'
                         ])
                         parametros['Valor'].extend([
                             score['x'], 
@@ -378,15 +378,15 @@ def create_gauge_chart(df):
     fig = go.Figure(go.Indicator(
         mode="gauge+number",
         value=df['p'].mean(),
-        title={'text': "Nivel de Riesgo Promedio"},
+        title={'text': "Nivel de Probabilidad Promedio"},
         gauge={
             'axis': {'range': [0, 10]},
             'bar': {'color': "darkblue"},
             'steps': [
-                {'range': [0, 3], 'color': "red", 'name': "Riesgo Muy Alto"},
-                {'range': [3, 5], 'color': "orange", 'name': "Riesgo Alto"},
-                {'range': [5, 8], 'color': "yellow", 'name': "Riesgo Medio"},
-                {'range': [8, 10], 'color': "green", 'name': "Riesgo Bajo"}
+                {'range': [0, 3], 'color': "red", 'name': "Muy Alto"},
+                {'range': [3, 5], 'color': "orange", 'name': "Alto"},
+                {'range': [5, 8], 'color': "yellow", 'name': "Medio"},
+                {'range': [8, 10], 'color': "green", 'name': "Bajo"}
             ]
         }
     ))
@@ -402,55 +402,35 @@ def create_gauge_chart(df):
     )
     return fig
 
-# Actualiza el diccionario para incluir "Riesgo" en las claves
-COLORES_RIESGO = {
-    'Riesgo Bajo': '#008000',      # Verde más oscuro
-    'Riesgo Medio': '#ffd700',     # Amarillo más vivo
-    'Riesgo Alto': '#ff8c00',      # Naranja más intenso
-    'Riesgo Muy Alto': '#ff0000'   # Rojo más brillante
+# Actualiza el diccionario para incluir "Probabilidad" en las claves
+COLORES_PROBABILIDAD = {
+    'Muy Alto': '#ff0000',  # Rojo
+    'Alto': '#ff8c00',      # Naranja
+    'Medio': '#ffd700',     # Amarillo
+    'Bajo': '#008000',      # Verde
+    'Muy Alta': '#ff0000',  # Rojo
+    'Alta': '#ff8c00',      # Naranja
+    'Media': '#ffd700',     # Amarillo
+    'Baja': '#008000'       # Verde
 }
 
 
 def create_pie_chart(df):
     value_counts = df['nivel_riesgo'].value_counts()
-    
     fig = go.Figure(data=[go.Pie(
         labels=value_counts.index,
         values=value_counts.values,
-        marker=dict(colors=[COLORES_RIESGO[nivel] for nivel in value_counts.index]),
-        textposition='inside',
-        textinfo='percent',  # Solo mostrar porcentajes
-        hole=0.3,
-        hovertemplate="<b>%{label}</b><br>" +
-                     "Cantidad: %{value}<br>" +
-                     "Porcentaje: %{percent:.1%}<extra></extra>"
+        hole=.3,
+        marker=dict(colors=[COLORES_PROBABILIDAD[nivel] for nivel in value_counts.index]),
+        textinfo='percent+label'
     )])
     
     fig.update_layout(
-        title="Distribución de Niveles de Riesgo",
-        legend=dict(
-            orientation="h",
-            yanchor="top",
-            y=-0.2,
-            xanchor="center",
-            x=0.5,
-            bgcolor='rgba(255,255,255,0.9)',
-            bordercolor='rgba(0,0,0,0.1)',
-            borderwidth=1
-        ),
-        margin=dict(
-            l=10,
-            r=10, 
-            t=30,
-            b=50
-        ),
-        height=300,
-        autosize=True,
-        showlegend=True,
-        paper_bgcolor='rgba(0,0,0,0)',
-        plot_bgcolor='rgba(0,0,0,0)'
+        title="Distribución de Niveles de Probabilidad",
+        showlegend=False,
+        margin=dict(l=20, r=20, t=40, b=20),
+        height=300
     )
-    
     return fig
 
 def create_heatmap(df):
@@ -475,7 +455,7 @@ def create_comparison_chart(df):
     centrales = df['central'].unique()
     
     fig.add_trace(go.Bar(
-        name='Valoración de Riesgo (P)',
+        name='Valoración de Probabilidad (P)',
         x=centrales,
         y=[df[df['central'] == central]['p'].mean() for central in centrales],
         marker_color='blue'
@@ -538,12 +518,12 @@ def create_table(df):
     return dash_table.DataTable(
         data=df.to_dict('records'),
         columns=[
-            {"name": "Infraestructura", "id": "nombre"},
             {"name": "Central", "id": "central"},
+            {"name": "Infraestructura", "id": "nombre"},
             {"name": "Fecha", "id": "fecha"},
-            {"name": "Valor P", "id": "p"},
-            {"name": "Nivel Riesgo", "id": "nivel_riesgo"},
-            {"name": "Riesgo EPM", "id": "epm_risk_level"}
+            {"name": "Valor P", "id": "p", "type": "numeric", "format": {"specifier": ".3f"}},
+            {"name": "Probabilidad MESERI", "id": "nivel_riesgo"},
+            {"name": "Probabilidad EPM", "id": "epm_risk_level"}
         ],
         style_table={
             'overflowX': 'auto',
@@ -570,11 +550,11 @@ def create_table(df):
                 'if': {'row_index': 'odd'},
                 'backgroundColor': 'rgb(248, 248, 248)'
             },
-            # Colores para Nivel Riesgo MESERI
+            # Colores para Nivel Probabilidad MESERI (masculino)
             {
                 'if': {
                     'column_id': 'nivel_riesgo',
-                    'filter_query': '{nivel_riesgo} = "Riesgo Muy Alto"'
+                    'filter_query': '{nivel_riesgo} = "Muy Alto"'
                 },
                 'backgroundColor': '#ff0000',
                 'color': 'white'
@@ -582,7 +562,7 @@ def create_table(df):
             {
                 'if': {
                     'column_id': 'nivel_riesgo',
-                    'filter_query': '{nivel_riesgo} = "Riesgo Alto"'
+                    'filter_query': '{nivel_riesgo} = "Alto"'
                 },
                 'backgroundColor': '#ff8c00',
                 'color': 'white'
@@ -590,48 +570,48 @@ def create_table(df):
             {
                 'if': {
                     'column_id': 'nivel_riesgo',
-                    'filter_query': '{nivel_riesgo} = "Riesgo Medio"'
+                    'filter_query': '{nivel_riesgo} = "Medio"'
                 },
                 'backgroundColor': '#ffd700'
             },
             {
                 'if': {
                     'column_id': 'nivel_riesgo',
-                    'filter_query': '{nivel_riesgo} = "Riesgo Bajo"'
+                    'filter_query': '{nivel_riesgo} = "Bajo"'
                 },
                 'backgroundColor': '#008000',
                 'color': 'white'
             },
-            # Colores para Riesgo EPM
+            # Colores para Probabilidad EPM (femenino)
             {
                 'if': {
                     'column_id': 'epm_risk_level',
-                    'filter_query': '{epm_risk_level} = "Extremo"'
+                    'filter_query': '{epm_risk_level} = "Muy Alta"'
                 },
-                'backgroundColor': '#ff0000',  # Mismo rojo que Riesgo Muy Alto
+                'backgroundColor': '#ff0000',
                 'color': 'white'
             },
             {
                 'if': {
                     'column_id': 'epm_risk_level',
-                    'filter_query': '{epm_risk_level} = "Alto"'
+                    'filter_query': '{epm_risk_level} = "Alta"'
                 },
-                'backgroundColor': '#ff8c00',  # Mismo naranja que Riesgo Alto
+                'backgroundColor': '#ff8c00',
                 'color': 'white'
             },
             {
                 'if': {
                     'column_id': 'epm_risk_level',
-                    'filter_query': '{epm_risk_level} = "Tolerable"'
+                    'filter_query': '{epm_risk_level} = "Media"'
                 },
-                'backgroundColor': '#ffd700'  # Mismo amarillo que Riesgo Medio
+                'backgroundColor': '#ffd700'
             },
             {
                 'if': {
                     'column_id': 'epm_risk_level',
-                    'filter_query': '{epm_risk_level} = "Aceptable"'
+                    'filter_query': '{epm_risk_level} = "Baja"'
                 },
-                'backgroundColor': '#008000',  # Mismo verde que Riesgo Bajo
+                'backgroundColor': '#008000',
                 'color': 'white'
             }
         ],
