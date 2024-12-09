@@ -44,15 +44,24 @@ venv\Scripts\activate # Windows
 3. Instalar dependencias:
 pip install -r requirements.txt
 
-4. Configurar variables de entorno
+4. Configurar variables de entorno:
+   - Crear archivo `.env` en la raíz del proyecto con la siguiente estructura:
+   ```
+   SECRET_KEY=your_secret_key_here
+   DATABASE_URL=mysql://user:password@host/database_name
+   FLASK_ENV=development
+   DEBUG=True
+   ```
 
-5. Inicializar la base de datos
-
-6. Ejecutar la aplicación
-
+5. Ejecutar la aplicación:
+ ```bash
+   python app.py
+   ```
 
 ### 📱 Uso
-1. Acceder a `http://localhost:5000`
+1. La aplicación estará disponible en:
+   - `http://localhost:5000` (o el puerto que hayas configurado)
+   - La URL y puerto exactos se mostrarán en la consola al iniciar la aplicación
 2. Iniciar sesión con credenciales de administrador
 3. Usar los filtros para seleccionar centrales e infraestructuras
 4. Visualizar datos en gráficos interactivos:
@@ -72,7 +81,7 @@ pip install -r requirements.txt
 ## MESERI Fire Risk Assessment Dashboard
 
 ### 📋 Description
-Interactive dashboard developed for EPM (Empresas Públicas de Medellín) that implements the MESERI method (Simplified Method of Fire Risk Assessment) to evaluate and visualize fire risks across different infrastructures.
+Interactive dashboard developed for Colombian Red Cross and EPM (Empresas Públicas de Medellín) that implements the MESERI method (Simplified Method of Fire Risk Assessment) to evaluate and visualize fire risks across different infrastructures.
 
 ### ✨ Key Features
 - 📊 Risk assessment using MESERI methodology
@@ -107,14 +116,24 @@ venv\Scripts\activate # Windows
 3. Install dependencies:
 pip install -r requirements.txt
 
-4. Configure environment variables
+4. Configure environment variables:
+   - Create a `.env` file in the project root with the following structure:
+ ```
+   SECRET_KEY=your_secret_key_here
+   DATABASE_URL=mysql://user:password@host/database_name
+   FLASK_ENV=development
+   DEBUG=True
+```
  
-5. Initialize database
-
-6. Run the application
+5. Run the application:
+```bash
+   python app.py
+   ```
 
 ### 📱 Usage
-1. Access `http://localhost:5000`
+1. The application will be available at:
+   - The URL and port will be displayed in the console when starting the application
+   - Default: `http://localhost:5000` (port may vary depending on availability)
 2. Login with administrator credentials
 3. Use filters to select plants and infrastructures
 4. View data in interactive charts:
