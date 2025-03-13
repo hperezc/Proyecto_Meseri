@@ -2,7 +2,7 @@
 
 [English](#english) | [Español](#español)
 
-![Logo Cruz Roja](static/img/logo-cruz-roja.png)
+<img src="static/img/logo-cruz-roja.png" alt="Logo Cruz Roja" width="200">
 
 ## Español
 
@@ -82,47 +82,10 @@ El método MESERI es una metodología de evaluación de riesgo de incendio que c
 * Bootstrap 5 (Frontend)
 * MySQL (Base de datos)
 
-### ⚙️ Instalación
-
-1. Clonar el repositorio:
-```bash
-git clone https://github.com/hperezc/Proyecto_Meseri.git
-cd Proyecto_Meseri
-```
-
-2. Crear y activar entorno virtual:
-```bash
-python -m venv venv
-# Linux/Mac
-source venv/bin/activate
-# Windows
-venv\\Scripts\\activate
-```
-
-3. Instalar dependencias:
-```bash
-pip install -r requirements.txt
-```
-
-4. Configurar variables de entorno:
-* Crear archivo `.env` en la raíz del proyecto con la siguiente estructura:
-```env
-SECRET_KEY=your_secret_key_here
-DATABASE_URL=mysql://user:password@host/database_name
-FLASK_ENV=development
-DEBUG=True
-```
-
-5. Ejecutar la aplicación:
-```bash
-python app.py
-```
-
 ### 📱 Uso
 
-1. La aplicación estará disponible en:
-   * `http://localhost:5000` (o el puerto que hayas configurado)
-   * La URL y puerto exactos se mostrarán en la consola al iniciar la aplicación
+1. Accede a la aplicación en:
+   [https://meseri-app.onrender.com](https://meseri-app.onrender.com)
 
 2. Iniciar sesión con credenciales de administrador
 3. Usar los filtros para seleccionar centrales e infraestructuras
@@ -135,7 +98,7 @@ python app.py
 
 ### 🌐 Demo en Vivo
 
-Puedes ver una demostración en vivo de la aplicación en:
+Puedes acceder a la aplicación en:
 [https://meseri-app.onrender.com](https://meseri-app.onrender.com)
 
 ### 📞 Contacto
@@ -217,7 +180,7 @@ The MESERI method is a fire risk assessment methodology that separately consider
 * Record editing and updating
 * Detailed report export
 
-### ��️ Technologies Used
+### 🛠️ Technologies Used
 
 * Python 3.11+
 * Flask (Web framework)
@@ -228,47 +191,10 @@ The MESERI method is a fire risk assessment methodology that separately consider
 * Bootstrap 5 (Frontend)
 * MySQL (Database)
 
-### ⚙️ Installation
-
-1. Clone the repository:
-```bash
-git clone https://github.com/hperezc/Proyecto_Meseri.git
-cd Proyecto_Meseri
-```
-
-2. Create and activate virtual environment:
-```bash
-python -m venv venv
-# Linux/Mac
-source venv/bin/activate
-# Windows
-venv\\Scripts\\activate
-```
-
-3. Install dependencies:
-```bash
-pip install -r requirements.txt
-```
-
-4. Configure environment variables:
-* Create a `.env` file in the project root with the following structure:
-```env
-SECRET_KEY=your_secret_key_here
-DATABASE_URL=mysql://user:password@host/database_name
-FLASK_ENV=development
-DEBUG=True
-```
-
-5. Run the application:
-```bash
-python app.py
-```
-
 ### 📱 Usage
 
-1. The application will be available at:
-   * `http://localhost:5000` (or your configured port)
-   * The exact URL and port will be displayed in the console when starting the application
+1. Access the application at:
+   [https://meseri-app.onrender.com](https://meseri-app.onrender.com)
 
 2. Login with administrator credentials
 3. Use filters to select plants and infrastructures
@@ -281,7 +207,7 @@ python app.py
 
 ### 🌐 Live Demo
 
-You can see a live demonstration of the application at:
+You can access the application at:
 [https://meseri-app.onrender.com](https://meseri-app.onrender.com)
 
 ### 📞 Contact
