@@ -1,0 +1,468 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="form-header">
+        <h1>Método Simplificado de Evaluación de Riesgo de Incendio</h1>
+        <p>Sistema de evaluación MESERI para análisis de riesgos de incendio en infraestructuras</p>
+    </div>
+    <form id="infraForm" class="needs-validation" novalidate>
+        <!-- Información General -->
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Información General</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Central</label>
+                        <input type="text" class="form-control" name="central" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Infraestructura</label>
+                        <input type="text" class="form-control" name="nombre" required>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Factores de Construcción -->
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Factores de Construcción</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Número de plantas/pisos</label>
+                        <select class="form-select" name="numero_pisos" required>
+                            <option value="">Seleccione...</option>
+                            <option value="1-2">1 o 2 (menor de 6m)</option>
+                            <option value="3-5">3, 4 o 5 (entre 6 y 15m)</option>
+                            <option value="6-9">6, 7, 8 o 9 (entre 15 y 28m)</option>
+                            <option value="10+">10 o más (más de 28m)</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Superficie mayor sector de incendios</label>
+                        <select class="form-select" name="superficie_mayor_sector" required>
+                            <option value="">Seleccione...</option>
+                            <option value="0-500">de 0 a 500 m²</option>
+                            <option value="501-1500">de 501 a 1500 m²</option>
+                            <option value="1501-2500">de 1501 a 2500 m²</option>
+                            <option value="2501-3500">de 2501 a 3500 m²</option>
+                            <option value="3501-4500">de 3501 a 4500 m²</option>
+                            <option value=">4500">mayor de 4500 m²</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Resistencia al fuego</label>
+                        <select class="form-select" name="resistencia_fuego" required>
+                            <option value="">Seleccione...</option>
+                            <option value="hormigon">Resistente al fuego (hormigón)</option>
+                            <option value="metalica">No combustible (metálica)</option>
+                            <option value="madera">Combustible (madera)</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Falsos Techos</label>
+                        <select class="form-select" name="falsos_techos" required>
+                            <option value="">Seleccione...</option>
+                            <option value="sin">Sin falsos techos</option>
+                            <option value="incombustible">Con falsos techos incombustibles</option>
+                            <option value="combustible">Con falsos techos combustibles</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Factores de Situación -->
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Factores de Situación</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Distancia de los Bomberos</label>
+                        <select class="form-select" name="distancia_bomberos" required>
+                            <option value="">Seleccione...</option>
+                            <option value="menor5">Menor de 5 km</option>
+                            <option value="5-10">Entre 5 y 10 km</option>
+                            <option value="10-15">Entre 10 y 15 km</option>
+                            <option value="15-25">Entre 15 y 25 km</option>
+                            <option value="mayor25">Mayor de 25 km</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Tiempo de llegada</label>
+                        <select class="form-select" name="tiempo_llegada" required>
+                            <option value="">Seleccione...</option>
+                            <option value="5">Menor de 5 minutos</option>
+                            <option value="5-10">Entre 5 y 10 minutos</option>
+                            <option value="10-15">Entre 10 y 15 minutos</option>
+                            <option value="15-25">Entre 15 y 25 minutos</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Accesibilidad al edificio</label>
+                        <select class="form-select" name="accesibilidad_edificio" required>
+                            <option value="">Seleccione...</option>
+                            <option value="buena">Buena</option>
+                            <option value="media">Media</option>
+                            <option value="mala">Mala</option>
+                            <option value="muy_mala">Muy mala</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Factores de Proceso -->
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Factores de Proceso</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Peligro de activación</label>
+                        <select class="form-select" name="peligro_activacion" required>
+                            <option value="">Seleccione...</option>
+                            <option value="bajo">Bajo</option>
+                            <option value="medio">Medio</option>
+                            <option value="alto">Alto</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Carga de fuego</label>
+                        <select class="form-select" name="carga_fuego" required>
+                            <option value="">Seleccione...</option>
+                            <option value="baja">Baja</option>
+                            <option value="media">Media</option>
+                            <option value="alta">Alta</option>
+                            <option value="muy_alta">Muy alta</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Inflamabilidad</label>
+                        <select class="form-select" name="combustibilidad" required>
+                            <option value="">Seleccione...</option>
+                            <option value="baja">Baja</option>
+                            <option value="media">Media</option>
+                            <option value="alta">Alta</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Orden y limpieza</label>
+                        <select class="form-select" name="orden_limpieza" required>
+                            <option value="">Seleccione...</option>
+                            <option value="bajo">Bajo</option>
+                            <option value="medio">Medio</option>
+                            <option value="alto">Alto</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Almacenamiento en altura</label>
+                        <select class="form-select" name="almacenamiento_altura" required>
+                            <option value="">Seleccione...</option>
+                            <option value="menor2">Menor de 2m</option>
+                            <option value="2-6">Entre 2 y 6m</option>
+                            <option value="mayor6">Mayor de 6m</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Factores de Valor Económico -->
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Factores de Valor Económico</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Concentración de valores</label>
+                        <select class="form-select" name="concentracion_valores" required>
+                            <option value="">Seleccione...</option>
+                            <option value="inferior2.6">Inferior a 2.6 COP MILL/m²</option>
+                            <option value="entre2.6-6.5">Entre 2.6 y 6.5 COP MILL/m²</option>
+                            <option value="superior6.5">Superior a 6.5 COP MILL/m²</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Factores de Destructibilidad -->
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Factores de Destructibilidad</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Por calor</label>
+                        <select class="form-select" name="por_calor" required>
+                            <option value="">Seleccione...</option>
+                            <option value="baja">Baja</option>
+                            <option value="media">Media</option>
+                            <option value="alta">Alta</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Por humo</label>
+                        <select class="form-select" name="por_humo" required>
+                            <option value="">Seleccione...</option>
+                            <option value="baja">Baja</option>
+                            <option value="media">Media</option>
+                            <option value="alta">Alta</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Por corrosión</label>
+                        <select class="form-select" name="por_corrosion" required>
+                            <option value="">Seleccione...</option>
+                            <option value="baja">Baja</option>
+                            <option value="media">Media</option>
+                            <option value="alta">Alta</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Por agua</label>
+                        <select class="form-select" name="por_agua" required>
+                            <option value="">Seleccione...</option>
+                            <option value="baja">Baja</option>
+                            <option value="media">Media</option>
+                            <option value="alta">Alta</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Factores de Propagabilidad -->
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Factores de Propagabilidad</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Propagabilidad horizontal</label>
+                        <select class="form-select" name="propagabilidad_horizontal" required>
+                            <option value="">Seleccione...</option>
+                            <option value="baja">Baja</option>
+                            <option value="media">Media</option>
+                            <option value="alta">Alta</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Propagabilidad vertical</label>
+                        <select class="form-select" name="propagabilidad_vertical" required>
+                            <option value="">Seleccione...</option>
+                            <option value="baja">Baja</option>
+                            <option value="media">Media</option>
+                            <option value="alta">Alta</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Instalaciones de Protección Contra Incendios -->
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Instalaciones de Protección Contra Incendios</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <!-- Detección automática -->
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Detección automática</label>
+                        <select class="form-select" name="deteccion_automatica" required>
+                            <option value="">Seleccione...</option>
+                            <option value="con_vigilancia_con_cra">Con vigilancia y conexión a CRA (4)</option>
+                            <option value="con_vigilancia_sin_cra">Con vigilancia sin conexión a CRA (3)</option>
+                            <option value="sin_vigilancia_con_cra">Sin vigilancia con conexión a CRA (2)</option>
+                            <option value="sin_vigilancia_sin_cra">Sin vigilancia ni conexión a CRA (0)</option>
+                        </select>
+                    </div>
+
+                    <!-- Rociadores automáticos -->
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Rociadores automáticos</label>
+                        <select class="form-select" name="rociadores_automaticos" required>
+                            <option value="">Seleccione...</option>
+                            <option value="con_vigilancia_con_cra">Con vigilancia y conexión a CRA (8)</option>
+                            <option value="con_vigilancia_sin_cra">Con vigilancia sin conexión a CRA (7)</option>
+                            <option value="sin_vigilancia_con_cra">Sin vigilancia con conexión a CRA (6)</option>
+                            <option value="sin_vigilancia_sin_cra">Sin vigilancia ni conexión a CRA (5)</option>
+                        </select>
+                    </div>
+
+                    <!-- Extintores portátiles -->
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Extintores portátiles</label>
+                        <select class="form-select" name="extintores_portatiles" required>
+                            <option value="">Seleccione...</option>
+                            <option value="con_vigilancia">Con vigilancia (2)</option>
+                            <option value="sin_vigilancia">Sin vigilancia (1)</option>
+                        </select>
+                    </div>
+
+                    <!-- Bocas de incendio equipadas -->
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Gabinetes/Tomas de mangueras</label>
+                        <select class="form-select" name="bocas_incendio" required>
+                            <option value="">Seleccione...</option>
+                            <option value="con_vigilancia">Con vigilancia (2)</option>
+                            <option value="sin_vigilancia">Sin vigilancia (2)</option>
+                        </select>
+                    </div>
+
+                    <!-- Hidrantes exteriores -->
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Hidrantes Exteriores</label>
+                        <select class="form-select" name="hidrantes_exteriores" required>
+                            <option value="">Seleccione...</option>
+                            <option value="con_vigilancia">Con vigilancia (4)</option>
+                            <option value="sin_vigilancia">Sin vigilancia (2)</option>
+                        </select>
+                    </div>
+
+                    <!-- Organización -->
+                    <div class="col-12 mt-4">
+                        <h6 class="mb-3">Organización de la protección contra incendios</h6>
+                    </div>
+
+                    <!-- Equipos de primera intervención -->
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Equipos de primera intervención (EPI)</label>
+                        <select class="form-select" name="equipos_primera_intervencion" required>
+                            <option value="">Seleccione...</option>
+                            <option value="con_vigilancia">Con vigilancia (2)</option>
+                            <option value="sin_vigilancia">Sin vigilancia (2)</option>
+                        </select>
+                    </div>
+
+                    <!-- Equipos de segunda intervención -->
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Equipos de segunda intervención (ESI)</label>
+                        <select class="form-select" name="equipos_segunda_intervencion" required>
+                            <option value="">Seleccione...</option>
+                            <option value="con_vigilancia">Con vigilancia (4)</option>
+                            <option value="sin_vigilancia">Sin vigilancia (4)</option>
+                        </select>
+                    </div>
+
+                    <!-- Planes de emergencia -->
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Planes de emergencia</label>
+                        <select class="form-select" name="planes_emergencia" required>
+                            <option value="">Seleccione...</option>
+                            <option value="con_vigilancia">Con vigilancia (4)</option>
+                            <option value="sin_vigilancia">Sin vigilancia (2)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Botones de acción -->
+        <div class="row mt-3">
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary">Guardar</button>
+                <button type="button" class="btn btn-secondary" onclick="guardarBorrador()">Guardar Borrador</button>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('infraForm');
+    
+    {% if modo == 'edicion' and registro %}
+    const registro = {{ registro.to_dict()|tojson|safe }};
+    
+    Object.keys(registro).forEach(function(campo) {
+        const elemento = form.elements[campo];
+        if (elemento) {
+            if (elemento.tagName === 'SELECT') {
+                Array.from(elemento.options).forEach(function(option) {
+                    if (option.value === registro[campo]) {
+                        elemento.value = registro[campo];
+                    }
+                });
+            } else {
+                elemento.value = registro[campo];
+            }
+        }
+    });
+    {% endif %}
+
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        if (!form.checkValidity()) {
+            e.stopPropagation();
+            form.classList.add('was-validated');
+            return;
+        }
+        
+        const formData = new FormData(form);
+        const datos = Object.fromEntries(formData.entries());
+        
+        try {
+            const url = {% if modo == 'edicion' %}
+                `/editar_registro/{{ registro.id }}`
+            {% else %}
+                '/guardar'
+            {% endif %};
+            
+            const response = await fetch(url, {S
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(datos)
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                alert(result.message);
+                if (confirm('¿Desea ver el dashboard con los resultados?')) {
+                    window.location.href = '/dashboard/';
+                } else {
+                    window.location.href = '/admin';
+                }
+            } else {
+                alert('Error: ' + result.error);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error al procesar la solicitud');
+        }
+    });
+});
+</script>
+{% endblock %} 

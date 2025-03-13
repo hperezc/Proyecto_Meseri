@@ -1,0 +1,332 @@
+/* Variables de colores */
+:root {
+    --primary-color: #2c3e50;
+    --secondary-color: #34495e;
+    --accent-color: #3498db;
+    --success-color: #2ecc71;
+    --warning-color: #f1c40f;
+    --danger-color: #e74c3c;
+    --light-gray: #f5f6fa;
+    --border-color: #dcdde1;
+  }
+  
+  /* Estilos generales */
+  body {
+    background-color: var(--light-gray);
+    font-family: 'Roboto', sans-serif;
+  }
+  
+  .container {
+    max-width: 1200px;
+    padding: 2rem;
+  }
+  
+  /* Header y navegación */
+  .navbar {
+    background-color: #1e3d59;
+    padding: 0.5rem 1rem;
+  }
+  
+  .navbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 0;
+  }
+  
+  .logo-epm, .logo-cruz-roja {
+    height: 60px;
+    width: auto;
+    transition: transform 0.3s ease;
+  }
+  
+  .logo-epm:hover, .logo-cruz-roja:hover {
+    transform: scale(1.05);
+  }
+  
+  .navbar-title {
+    color: white;
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    margin: 0;
+    padding: 0.5rem 0;
+  }
+  
+  /* Estilos del formulario */
+  .form-header {
+    background: linear-gradient(135deg, #1a237e 0%, #0d47a1 100%);
+    color: white;
+    padding: 2rem;
+    border-radius: 10px;
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+  
+  .form-header h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+  }
+  
+  .form-header p {
+    font-size: 1.1rem;
+    opacity: 0.9;
+  }
+  
+  .card {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+    transition: transform 0.2s;
+  }
+  
+  .card:hover {
+    transform: translateY(-5px);
+  }
+  
+  .card-header {
+    background-color: var(--primary-color);
+    color: white;
+    border-radius: 10px 10px 0 0 !important;
+    padding: 1rem;
+  }
+  
+  .card-body {
+    padding: 2rem;
+  }
+  
+  /* Estilos de los inputs */
+  .form-label {
+    font-weight: 500;
+    color: var(--secondary-color);
+  }
+  
+  .form-select, .form-control {
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    padding: 0.75rem;
+    transition: all 0.3s;
+  }
+  
+  .form-select:focus, .form-control:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+  }
+  
+  /* Botones */
+  .btn {
+    padding: 0.75rem 2rem;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.3s;
+  }
+  
+  .btn-primary {
+    background-color: var(--accent-color);
+    border: none;
+  }
+  
+  .btn-primary:hover {
+    background-color: #2980b9;
+    transform: translateY(-2px);
+  }
+  
+  .btn-secondary {
+    background-color: var(--secondary-color);
+    border: none;
+  }
+  
+  /* Indicadores de progreso */
+  .progress-indicator {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background: white;
+    border-radius: 10px;
+  }
+  
+  .progress-step {
+    text-align: center;
+    position: relative;
+    flex: 1;
+  }
+  
+  .progress-step.active {
+    color: var(--accent-color);
+  }
+  
+  /* Responsive */
+  @media (max-width: 768px) {
+    .container {
+      padding: 1rem;
+    }
+    
+    .card-body {
+      padding: 1rem;
+    }
+    
+    .logo-epm, .logo-cruz-roja {
+      height: 45px;
+    }
+    
+    .navbar-title {
+      font-size: 1.8rem;
+      margin-left: 1rem;
+    }
+  }
+  
+  /* Estilos para los enlaces del navbar */
+  .navbar-nav .nav-link {
+    color: white !important;
+    font-weight: 500;
+    padding: 0.5rem 1.2rem;
+    margin: 0 0.3rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+  }
+  
+  .navbar-nav .nav-link:before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 0;
+    background: rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+    z-index: -1;
+  }
+  
+  .navbar-nav .nav-link:hover:before {
+    height: 100%;
+  }
+  
+  .navbar-nav .nav-link:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .navbar-nav .nav-link.active {
+    background: rgba(255, 255, 255, 0.2);
+  }
+  
+  /* Estilos específicos para cada tipo de enlace */
+  .navbar-nav .nav-link[href="/"] {
+    background: linear-gradient(45deg, #3498db, #2980b9);
+  }
+  
+  .navbar-nav .nav-link[href="/dashboard/"] {
+    background: linear-gradient(45deg, #2ecc71, #27ae60);
+  }
+  
+  .navbar-nav .nav-link[href="/admin"] {
+    background: linear-gradient(45deg, #e74c3c, #c0392b);
+  }
+  
+  .navbar-nav .nav-link[href="/logout"] {
+    background: linear-gradient(45deg, #95a5a6, #7f8c8d);
+  }
+  
+  .navbar-nav .nav-link[href="/login"] {
+    background: linear-gradient(45deg, #f1c40f, #f39c12);
+  }
+  
+  .info-icon {
+    color: rgba(255, 255, 255, 0.8);
+    cursor: pointer;
+    transition: color 0.3s ease;
+    font-size: 1.2rem;
+  }
+  
+  .info-icon:hover {
+    color: white;
+  }
+  
+  .dash-tooltip {
+    opacity: 1 !important;
+    background-color: white !important;
+    color: #1e3d59 !important;
+    padding: 8px 12px !important;
+    border-radius: 4px !important;
+    font-size: 0.9rem !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2) !important;
+    border: 1px solid rgba(0,0,0,0.1) !important;
+    max-width: 300px !important;
+    z-index: 1000 !important;
+  }
+  
+  .dash-tooltip ul {
+    padding-left: 20px;
+    margin-bottom: 0;
+  }
+  
+  .dash-tooltip li {
+    margin: 5px 0;
+  }
+  
+  /* Footer actualizado */
+  .footer {
+    background-color: #f8f9fa;
+    padding: 1.5rem 0;
+    margin-top: 3rem;
+    border-top: 1px solid #dee2e6;
+  }
+  
+  .footer .text-muted {
+    font-size: 0.9rem;
+  }
+  
+  /* Estilos para el navbar y logos */
+  .navbar {
+    background-color: #1e3d59;
+    padding: 0.5rem 1rem;
+  }
+  
+  .navbar-brand img {
+    transition: transform 0.3s ease;
+  }
+  
+  .navbar-brand img:hover {
+    transform: scale(1.05);
+  }
+  
+  /* Estilos para tooltips e íconos de información */
+  .fa-info-circle {
+    color: rgba(255, 255, 255, 0.9);
+    margin-left: 8px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .fa-info-circle:hover {
+    color: white;
+    transform: scale(1.1);
+  }
+  
+  /* Ajustes para los logos */
+  .header-logo {
+    height: 60px;
+    width: auto;
+    transition: transform 0.3s ease;
+  }
+  
+  .header-logo:hover {
+    transform: scale(1.05);
+  }
+  
+  @media (max-width: 768px) {
+    #comparison-chart {
+        margin-bottom: 40px !important;
+    }
+    
+    #comparison-chart .js-plotly-plot .legend {
+        position: relative !important;
+        margin-top: 20px !important;
+    }
+  }

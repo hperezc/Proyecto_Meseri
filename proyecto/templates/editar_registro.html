@@ -1,0 +1,352 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Editar Registro MESERI</h2>
+    <form id="editForm" method="post" onsubmit="return false;">
+        <!-- Información General -->
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Información General</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Central</label>
+                        <input type="text" class="form-control" name="central" value="{{ registro.central }}" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Infraestructura</label>
+                        <input type="text" class="form-control" name="nombre" value="{{ registro.nombre }}" required>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+                <!-- Factores de Construcción -->
+                <div class="card mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">Factores de Construcción</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Número de plantas/pisos</label>
+                                <select class="form-select" name="numero_pisos" required>
+                                    <option value="">Seleccione...</option>
+                                    <option value="1-2" {% if registro.numero_pisos == '1-2' %}selected{% endif %}>1 o 2 (menor de 6m)</option>
+                                    <option value="3-5" {% if registro.numero_pisos == '3-5' %}selected{% endif %}>3, 4 o 5 (entre 6 y 15m)</option>
+                                    <option value="6-9" {% if registro.numero_pisos == '6-9' %}selected{% endif %}>6, 7, 8 o 9 (entre 15 y 28m)</option>
+                                    <option value="10+" {% if registro.numero_pisos == '10+' %}selected{% endif %}>10 o más (más de 28m)</option>
+                                </select>
+                            </div>
+        
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Superficie mayor sector de incendios</label>
+                                <select class="form-select" name="superficie_mayor_sector" required>
+                                    <option value="">Seleccione...</option>
+                                    <option value="0-500" {% if registro.superficie_mayor_sector == '0-500' %}selected{% endif %}>Inferior a 500 m²</option>
+                                    <option value="501-1500" {% if registro.superficie_mayor_sector == '501-1500' %}selected{% endif %}>Entre 501 y 1500 m²</option>
+                                    <option value="1501-2500" {% if registro.superficie_mayor_sector == '1501-2500' %}selected{% endif %}>Entre 1501 y 2500 m²</option>
+                                    <option value="2501+" {% if registro.superficie_mayor_sector == '2501+' %}selected{% endif %}>Mayor de 2500 m²</option>
+                                </select>
+                            </div>
+        
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Resistencia al Fuego</label>
+                                <select class="form-select" name="resistencia_fuego" required>
+                                    <option value="">Seleccione...</option>
+                                    <option value="alta" {% if registro.resistencia_fuego == 'alta' %}selected{% endif %}>Alta (hormigón, obra)</option>
+                                    <option value="media" {% if registro.resistencia_fuego == 'media' %}selected{% endif %}>Media (metálica protegida)</option>
+                                    <option value="baja" {% if registro.resistencia_fuego == 'baja' %}selected{% endif %}>Baja (metálica sin proteger)</option>
+                                    <option value="madera" {% if registro.resistencia_fuego == 'madera' %}selected{% endif %}>Combustible (madera)</option>
+                                </select>
+                            </div>
+        
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Falsos Techos</label>
+                                <select class="form-select" name="falsos_techos" required>
+                                    <option value="">Seleccione...</option>
+                                    <option value="sin" {% if registro.falsos_techos == 'sin' %}selected{% endif %}>Sin falsos techos</option>
+                                    <option value="incombustible" {% if registro.falsos_techos == 'incombustible' %}selected{% endif %}>Con falsos techos incombustibles</option>
+                                    <option value="combustible" {% if registro.falsos_techos == 'combustible' %}selected{% endif %}>Con falsos techos combustibles</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+        <!-- Factores de Situación -->
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Factores de Situación</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Distancia de los Bomberos</label>
+                        <select class="form-select" name="distancia_bomberos" required>
+                            <option value="">Seleccione...</option>
+                            <option value="menor5" {% if registro.distancia_bomberos == 'menor5' %}selected{% endif %}>Menor de 5 km</option>
+                            <option value="5-10" {% if registro.distancia_bomberos == '5-10' %}selected{% endif %}>Entre 5 y 10 km</option>
+                            <option value="10-15" {% if registro.distancia_bomberos == '10-15' %}selected{% endif %}>Entre 10 y 15 km</option>
+                            <option value="15-25" {% if registro.distancia_bomberos == '15-25' %}selected{% endif %}>Entre 15 y 25 km</option>
+                            <option value="mayor25" {% if registro.distancia_bomberos == 'mayor25' %}selected{% endif %}>Mayor de 25 km</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Accesibilidad al Edificio</label>
+                        <select class="form-select" name="accesibilidad_edificio" required>
+                            <option value="">Seleccione...</option>
+                            <option value="buena" {% if registro.accesibilidad_edificio == 'buena' %}selected{% endif %}>Buena</option>
+                            <option value="media" {% if registro.accesibilidad_edificio == 'media' %}selected{% endif %}>Media</option>
+                            <option value="mala" {% if registro.accesibilidad_edificio == 'mala' %}selected{% endif %}>Mala</option>
+                            <option value="muy_mala" {% if registro.accesibilidad_edificio == 'muy_mala' %}selected{% endif %}>Muy mala</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Factores de Proceso -->
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Factores de Proceso</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Peligro de Activación</label>
+                        <select class="form-select" name="peligro_activacion" required>
+                            <option value="">Seleccione...</option>
+                            <option value="bajo" {% if registro.peligro_activacion == 'bajo' %}selected{% endif %}>Bajo</option>
+                            <option value="medio" {% if registro.peligro_activacion == 'medio' %}selected{% endif %}>Medio</option>
+                            <option value="alto" {% if registro.peligro_activacion == 'alto' %}selected{% endif %}>Alto</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Carga de Fuego</label>
+                        <select class="form-select" name="carga_fuego" required>
+                            <option value="">Seleccione...</option>
+                            <option value="baja" {% if registro.carga_fuego == 'baja' %}selected{% endif %}>Baja</option>
+                            <option value="media" {% if registro.carga_fuego == 'media' %}selected{% endif %}>Media</option>
+                            <option value="alta" {% if registro.carga_fuego == 'alta' %}selected{% endif %}>Alta</option>
+                            <option value="muy_alta" {% if registro.carga_fuego == 'muy_alta' %}selected{% endif %}>Muy Alta</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Combustibilidad</label>
+                        <select class="form-select" name="combustibilidad" required>
+                            <option value="">Seleccione...</option>
+                            <option value="baja" {% if registro.combustibilidad == 'baja' %}selected{% endif %}>Baja</option>
+                            <option value="media" {% if registro.combustibilidad == 'media' %}selected{% endif %}>Media</option>
+                            <option value="alta" {% if registro.combustibilidad == 'alta' %}selected{% endif %}>Alta</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Orden y Limpieza</label>
+                        <select class="form-select" name="orden_limpieza" required>
+                            <option value="">Seleccione...</option>
+                            <option value="bajo" {% if registro.orden_limpieza == 'bajo' %}selected{% endif %}>Bajo</option>
+                            <option value="medio" {% if registro.orden_limpieza == 'medio' %}selected{% endif %}>Medio</option>
+                            <option value="alto" {% if registro.orden_limpieza == 'alto' %}selected{% endif %}>Alto</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Almacenamiento en altura</label>
+                        <select class="form-select" name="almacenamiento_altura" required>
+                            <option value="">Seleccione...</option>
+                            <option value="menor2" {% if registro.almacenamiento_altura == 'menor2' %}selected{% endif %}>Menor de 2m</option>
+                            <option value="2-6" {% if registro.almacenamiento_altura == '2-6' %}selected{% endif %}>Entre 2 y 6m</option>
+                            <option value="mayor6" {% if registro.almacenamiento_altura == 'mayor6' %}selected{% endif %}>Mayor de 6m</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Factores de Valor Económico -->
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Factores de Valor Económico</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Concentración de valores</label>
+                        <select class="form-select" name="concentracion_valores" required>
+                            <option value="">Seleccione...</option>
+                            <option value="inferior2.6" {% if registro.concentracion_valores == 'inferior2.6' %}selected{% endif %}>Inferior a 2.6 COP MILL/m²</option>
+                            <option value="entre2.6-6.5" {% if registro.concentracion_valores == 'entre2.6-6.5' %}selected{% endif %}>Entre 2.6 y 6.5 COP MILL/m²</option>
+                            <option value="superior6.5" {% if registro.concentracion_valores == 'superior6.5' %}selected{% endif %}>Superior a 6.5 COP MILL/m²</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Propagabilidad -->
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Propagabilidad</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Propagabilidad Horizontal</label>
+                        <select class="form-select" name="propagabilidad_horizontal" required>
+                            <option value="">Seleccione...</option>
+                            <option value="baja" {% if registro.propagabilidad_horizontal == 'baja' %}selected{% endif %}>Baja</option>
+                            <option value="media" {% if registro.propagabilidad_horizontal == 'media' %}selected{% endif %}>Media</option>
+                            <option value="alta" {% if registro.propagabilidad_horizontal == 'alta' %}selected{% endif %}>Alta</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Propagabilidad Vertical</label>
+                        <select class="form-select" name="propagabilidad_vertical" required>
+                            <option value="">Seleccione...</option>
+                            <option value="baja" {% if registro.propagabilidad_vertical == 'baja' %}selected{% endif %}>Baja</option>
+                            <option value="media" {% if registro.propagabilidad_vertical == 'media' %}selected{% endif %}>Media</option>
+                            <option value="alta" {% if registro.propagabilidad_vertical == 'alta' %}selected{% endif %}>Alta</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Instalaciones de Protección Contra Incendios -->
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Instalaciones de Protección Contra Incendios</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <!-- Detección automática -->
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Detección Automática</label>
+                        <select class="form-select" name="deteccion_automatica" required>
+                            <option value="">Seleccione...</option>
+                            <option value="0" {% if registro.deteccion_automatica == '0' %}selected{% endif %}>No existe (0)</option>
+                            <option value="4" {% if registro.deteccion_automatica == '4' %}selected{% endif %}>Con vigilancia humana (4)</option>
+                            <option value="8" {% if registro.deteccion_automatica == '8' %}selected{% endif %}>Con vigilancia humana y conexión a CRA (8)</option>
+                        </select>
+                    </div>
+
+                    <!-- Rociadores automáticos -->
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Rociadores Automáticos</label>
+                        <select class="form-select" name="rociadores_automaticos" required>
+                            <option value="">Seleccione...</option>
+                            <option value="con_vigilancia" {% if registro.rociadores_automaticos == 'con_vigilancia' %}selected{% endif %}>Con vigilancia (8)</option>
+                            <option value="sin_vigilancia" {% if registro.rociadores_automaticos == 'sin_vigilancia' %}selected{% endif %}>Sin vigilancia (5)</option>
+                        </select>
+                    </div>
+
+                    <!-- Extintores portátiles -->
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Extintores Portátiles</label>
+                        <select class="form-select" name="extintores_portatiles" required>
+                            <option value="">Seleccione...</option>
+                            <option value="con_vigilancia" {% if registro.extintores_portatiles == 'con_vigilancia' %}selected{% endif %}>Con vigilancia (2)</option>
+                            <option value="sin_vigilancia" {% if registro.extintores_portatiles == 'sin_vigilancia' %}selected{% endif %}>Sin vigilancia (1)</option>
+                        </select>
+                    </div>
+
+                    <!-- Bocas de incendio -->
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Gabinetes/Tomas de mangueras</label>
+                        <select class="form-select" name="bocas_incendio" required>
+                            <option value="">Seleccione...</option>
+                            <option value="con_vigilancia" {% if registro.bocas_incendio == 'con_vigilancia' %}selected{% endif %}>Con vigilancia (2)</option>
+                            <option value="sin_vigilancia" {% if registro.bocas_incendio == 'sin_vigilancia' %}selected{% endif %}>Sin vigilancia (2)</option>
+                        </select>
+                    </div>
+
+                    <!-- Hidrantes exteriores -->
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Hidrantes Exteriores</label>
+                        <select class="form-select" name="hidrantes_exteriores" required>
+                            <option value="">Seleccione...</option>
+                            <option value="con_vigilancia" {% if registro.hidrantes_exteriores == 'con_vigilancia' %}selected{% endif %}>Con vigilancia (4)</option>
+                            <option value="sin_vigilancia" {% if registro.hidrantes_exteriores == 'sin_vigilancia' %}selected{% endif %}>Sin vigilancia (2)</option>
+                        </select>
+                    </div>
+
+                    <!-- Organización -->
+                    <div class="col-12 mt-4">
+                        <h6 class="mb-3">Organización de la protección contra incendios</h6>
+                    </div>
+
+                    <!-- Equipos de primera intervención -->
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Equipos de primera intervención (EPI)</label>
+                        <select class="form-select" name="equipos_primera_intervencion" required>
+                            <option value="">Seleccione...</option>
+                            <option value="con_vigilancia" {% if registro.equipos_primera_intervencion == 'con_vigilancia' %}selected{% endif %}>Con vigilancia (2)</option>
+                            <option value="sin_vigilancia" {% if registro.equipos_primera_intervencion == 'sin_vigilancia' %}selected{% endif %}>Sin vigilancia (2)</option>
+                        </select>
+                    </div>
+
+                    <!-- Equipos de segunda intervención -->
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Equipos de segunda intervención (ESI)</label>
+                        <select class="form-select" name="equipos_segunda_intervencion" required>
+                            <option value="">Seleccione...</option>
+                            <option value="con_vigilancia" {% if registro.equipos_segunda_intervencion == 'con_vigilancia' %}selected{% endif %}>Con vigilancia (4)</option>
+                            <option value="sin_vigilancia" {% if registro.equipos_segunda_intervencion == 'sin_vigilancia' %}selected{% endif %}>Sin vigilancia (4)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-between">
+            <a href="{{ url_for('admin_panel') }}" class="btn btn-secondary">Cancelar</a>
+            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('editForm');
+    
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        if (!form.checkValidity()) {
+            e.stopPropagation();
+            form.classList.add('was-validated');
+            return;
+        }
+        
+        const formData = new FormData(form);
+        const datos = Object.fromEntries(formData.entries());
+        
+        try {
+            const response = await fetch('/editar_registro/{{ registro.id }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(datos)
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                alert(result.message);
+                window.location.href = '/admin';
+            } else {
+                alert('Error: ' + result.error);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error al procesar la solicitud');
+        }
+    });
+});
+</script>
+{% endblock %}
