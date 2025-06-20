@@ -19,7 +19,7 @@ import base64
 import io
 from flask import current_app
 import dash
-import dash_core_components as dcc
+from dash import dcc
 from .risk_categories import get_epm_risk_level
 import traceback
 
@@ -110,10 +110,11 @@ def init_callbacks(app, db, Infraestructura):
                     elif isinstance(selected_infras, str) and selected_infras != 'all':
                         query = query.filter(Infraestructura.nombre == selected_infras)
                 
-                # Si no hay selección en los filtros o se selecciona 'all', 
-                # se mostrarán todos los registros
-                if not selected_centrales or not selected_infras:
-                    query = Infraestructura.query
+                # Filtros de fecha si están definidos
+                if start_date:
+                    query = query.filter(Infraestructura.fecha >= start_date)
+                if end_date:
+                    query = query.filter(Infraestructura.fecha <= end_date)
                 
                 # Ejecutar la consulta
                 infraestructuras = query.all()

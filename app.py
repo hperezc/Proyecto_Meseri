@@ -165,6 +165,8 @@ def index():
 def guardar():
     try:
         datos = request.get_json()
+        print(f"Debug - Datos recibidos: {datos}")  # Para debugging
+        
         if not datos:
             return jsonify({
                 'success': False,
@@ -173,17 +175,39 @@ def guardar():
         
         valido, mensaje = validar_datos(datos)
         if not valido:
+            print(f"Debug - Validación falló: {mensaje}")  # Para debugging
             return jsonify({
                 'success': False,
                 'error': mensaje
             }), 400
         
-        datos_limpios = {k: v.strip() if isinstance(v, str) else v 
-                        for k, v in datos.items()}
+        # Filtrar solo los campos que existen en el modelo
+        campos_validos = [
+            'central', 'nombre', 'numero_pisos', 'superficie_mayor_sector',
+            'resistencia_fuego', 'falsos_techos', 'distancia_bomberos',
+            'tiempo_llegada', 'accesibilidad_edificio', 'peligro_activacion',
+            'carga_fuego', 'combustibilidad', 'orden_limpieza',
+            'almacenamiento_altura', 'concentracion_valores', 'por_calor',
+            'por_humo', 'por_corrosion', 'por_agua', 'propagabilidad_horizontal',
+            'propagabilidad_vertical', 'deteccion_automatica',
+            'rociadores_automaticos', 'extintores_portatiles', 'bocas_incendio',
+            'hidrantes_exteriores', 'equipos_primera_intervencion',
+            'equipos_segunda_intervencion', 'planes_emergencia'
+        ]
+        
+        datos_limpios = {}
+        for campo in campos_validos:
+            if campo in datos:
+                valor = datos[campo]
+                datos_limpios[campo] = valor.strip() if isinstance(valor, str) else valor
+        
+        print(f"Debug - Datos limpios: {datos_limpios}")  # Para debugging
         
         nueva_infra = Infraestructura(**datos_limpios)
         db.session.add(nueva_infra)
         db.session.commit()
+        
+        print(f"Debug - Registro guardado con ID: {nueva_infra.id}")  # Para debugging
         
         return jsonify({
             'success': True,
@@ -191,18 +215,22 @@ def guardar():
             'id': nueva_infra.id
         })
         
-    except json.JSONDecodeError:
+    except json.JSONDecodeError as e:
+        print(f"Debug - Error JSON: {str(e)}")  # Para debugging
         return jsonify({
             'success': False,
             'error': 'Datos JSON inválidos'
         }), 400
     except SQLAlchemyError as e:
+        print(f"Debug - Error SQLAlchemy: {str(e)}")  # Para debugging
         db.session.rollback()
         return jsonify({
             'success': False,
             'error': 'Error en la base de datos: ' + str(e)
         }), 500
     except Exception as e:
+        print(f"Debug - Error general: {str(e)}")  # Para debugging
+        print(f"Debug - Tipo de error: {type(e)}")  # Para debugging
         db.session.rollback()
         return jsonify({
             'success': False,

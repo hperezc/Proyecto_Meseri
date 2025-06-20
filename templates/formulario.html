@@ -1,7 +1,13 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container mt-4">
+<!-- Barra de estado de conexión -->
+<div id="status-bar" class="status-bar status-online">
+    <span id="status-text">🟢 Conectado - Los datos se guardan automáticamente</span>
+    <span id="pending-counter" class="pending-counter" style="display:none;">0</span>
+</div>
+
+<div class="container mt-4" style="padding-top: 60px;">
     <div class="form-header">
         <h1>Método Simplificado de Evaluación de Riesgo de Incendio</h1>
         <p>Sistema de evaluación MESERI para análisis de riesgos de incendio en infraestructuras</p>
@@ -387,8 +393,21 @@
         <!-- Botones de acción -->
         <div class="row mt-3">
             <div class="col-12">
-                <button type="submit" class="btn btn-primary">Guardar</button>
-                <button type="button" class="btn btn-secondary" onclick="guardarBorrador()">Guardar Borrador</button>
+                <button type="submit" class="btn btn-primary">Guardar Evaluación</button>
+        
+        <!-- Controles offline -->
+        <div class="offline-controls">
+            <h6>🔄 Controles de Sincronización</h6>
+            <button type="button" id="sync-button" class="btn btn-sync" onclick="syncPendingForms()">
+                🔄 Sincronizar Pendientes
+            </button>
+            <button type="button" class="btn btn-offline" onclick="mostrarBorradores()">
+                📝 Ver Borradores
+            </button>
+            <button type="button" class="btn btn-offline" onclick="guardarBorrador()">
+                💾 Guardar Borrador
+            </button>
+                 </div>
             </div>
         </div>
     </form>
