@@ -19,7 +19,7 @@ import base64
 import io
 from flask import current_app
 import dash
-import dash_core_components as dcc
+from dash import dcc
 from .risk_categories import get_epm_risk_level
 import traceback
 
@@ -53,9 +53,9 @@ def init_callbacks(app, db, Infraestructura):
                 query = Infraestructura.query
                 
                 if selected_centrales and selected_centrales != 'all':
-                    if isinstance(selected_centrales, list):
+                    if isinstance(selected_centrales, list) and 'all' not in selected_centrales:
                         query = query.filter(Infraestructura.central.in_(selected_centrales))
-                    else:
+                    elif isinstance(selected_centrales, str) and selected_centrales != 'all':
                         query = query.filter(Infraestructura.central == selected_centrales)
                 
                 infraestructuras = query.with_entities(
@@ -93,31 +93,65 @@ def init_callbacks(app, db, Infraestructura):
                 print(f"Debug - Selected centrales: {selected_centrales}")
                 print(f"Debug - Selected infras: {selected_infras}")
                 
-                # Consulta base
+                # Consulta base - siempre empezar con una consulta limpia
                 query = Infraestructura.query
                 
+                # Debug: Contar total de registros en base de datos
+                total_records = Infraestructura.query.count()
+                print(f"Debug - Total records in database: {total_records}")
+                
+                # Verificar si hay filtros válidos seleccionados
+                has_central_filter = (selected_centrales and 
+                                    selected_centrales != 'all' and 
+                                    selected_centrales != [] and 
+                                    'all' not in (selected_centrales if isinstance(selected_centrales, list) else [selected_centrales]))
+                
+                has_infra_filter = (selected_infras and 
+                                  selected_infras != 'all' and 
+                                  selected_infras != [] and 
+                                  'all' not in (selected_infras if isinstance(selected_infras, list) else [selected_infras]))
+                
+                print(f"Debug - Has central filter: {has_central_filter}")
+                print(f"Debug - Has infra filter: {has_infra_filter}")
+                
                 # Filtro de centrales
-                if selected_centrales and selected_centrales != 'all':
-                    if isinstance(selected_centrales, list) and 'all' not in selected_centrales:
+                if has_central_filter:
+                    if isinstance(selected_centrales, list):
                         query = query.filter(Infraestructura.central.in_(selected_centrales))
-                    elif isinstance(selected_centrales, str) and selected_centrales != 'all':
+                    else:
                         query = query.filter(Infraestructura.central == selected_centrales)
                 
                 # Filtro de infraestructuras
-                if selected_infras and selected_infras != 'all':
-                    if isinstance(selected_infras, list) and 'all' not in selected_infras:
+                if has_infra_filter:
+                    if isinstance(selected_infras, list):
                         query = query.filter(Infraestructura.nombre.in_(selected_infras))
-                    elif isinstance(selected_infras, str) and selected_infras != 'all':
+                    else:
                         query = query.filter(Infraestructura.nombre == selected_infras)
                 
-                # Si no hay selección en los filtros o se selecciona 'all', 
-                # se mostrarán todos los registros
-                if not selected_centrales or not selected_infras:
-                    query = Infraestructura.query
+                # Debug: Mostrar valores de fecha antes de aplicar filtros
+                print(f"Debug - Start date: {start_date}")
+                print(f"Debug - End date: {end_date}")
+                
+                # Aplicar filtro de fechas si están definidas
+                if start_date:
+                    print(f"Debug - Applying start date filter: {start_date}")
+                    query = query.filter(Infraestructura.fecha >= start_date)
+                if end_date:
+                    print(f"Debug - Applying end date filter: {end_date}")
+                    query = query.filter(Infraestructura.fecha <= end_date)
+                
+                # Debug: Mostrar la consulta SQL generada
+                print(f"Debug - SQL Query: {str(query)}")
                 
                 # Ejecutar la consulta
                 infraestructuras = query.all()
                 print(f"Debug - Number of infrastructures found: {len(infraestructuras)}")
+                
+                # Debug: Mostrar todas las centrales encontradas
+                if infraestructuras:
+                    all_centrales = [infra.central for infra in infraestructuras]
+                    unique_centrales = list(set(all_centrales))
+                    print(f"Debug - Centrales found in query: {unique_centrales}")
                 
                 if not infraestructuras:
                     return [go.Figure()] * 4 + ["Sin datos disponibles"] + ["0"] * 4

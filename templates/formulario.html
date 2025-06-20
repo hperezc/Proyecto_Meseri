@@ -2,6 +2,33 @@
 
 {% block content %}
 <div class="container mt-4">
+    <!-- Barra de estado de conectividad -->
+    <div class="row mb-3">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <span class="me-2">Estado:</span>
+                    <span id="connection-status" class="badge bg-secondary">Verificando...</span>
+                    <span id="pending-counter" class="badge bg-danger ms-2" style="display: none;">0</span>
+                </div>
+                <div>
+                    <button id="sync-button" class="btn btn-primary btn-sm me-2" onclick="manualSync()" style="display: none;">
+                        <i class="fas fa-sync"></i> Sincronizar
+                    </button>
+                    <button class="btn btn-outline-secondary btn-sm me-2" onclick="showDrafts()">
+                        <i class="fas fa-file-alt"></i> Borradores
+                    </button>
+                    <button class="btn btn-outline-info btn-sm" onclick="guardarBorrador()">
+                        <i class="fas fa-save"></i> Guardar borrador
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Información de formularios pendientes -->
+    <div id="pending-info"></div>
+    
     <div class="form-header">
         <h1>Método Simplificado de Evaluación de Riesgo de Incendio</h1>
         <p>Sistema de evaluación MESERI para análisis de riesgos de incendio en infraestructuras</p>
@@ -15,7 +42,7 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label class="form-label">Central</label>
+                        <label class="form-label">Empresa</label>
                         <input type="text" class="form-control" name="central" required>
                     </div>
                     <div class="col-md-6 mb-3">
@@ -387,8 +414,9 @@
         <!-- Botones de acción -->
         <div class="row mt-3">
             <div class="col-12">
-                <button type="submit" class="btn btn-primary">Guardar</button>
-                <button type="button" class="btn btn-secondary" onclick="guardarBorrador()">Guardar Borrador</button>
+                <button type="submit" class="btn btn-primary btn-lg">
+                    <i class="fas fa-save"></i> Guardar Evaluación
+                </button>
             </div>
         </div>
     </form>
@@ -396,73 +424,5 @@
 {% endblock %}
 
 {% block scripts %}
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('infraForm');
-    
-    {% if modo == 'edicion' and registro %}
-    const registro = {{ registro.to_dict()|tojson|safe }};
-    
-    Object.keys(registro).forEach(function(campo) {
-        const elemento = form.elements[campo];
-        if (elemento) {
-            if (elemento.tagName === 'SELECT') {
-                Array.from(elemento.options).forEach(function(option) {
-                    if (option.value === registro[campo]) {
-                        elemento.value = registro[campo];
-                    }
-                });
-            } else {
-                elemento.value = registro[campo];
-            }
-        }
-    });
-    {% endif %}
-
-    form.addEventListener('submit', async function(e) {
-        e.preventDefault();
-        
-        if (!form.checkValidity()) {
-            e.stopPropagation();
-            form.classList.add('was-validated');
-            return;
-        }
-        
-        const formData = new FormData(form);
-        const datos = Object.fromEntries(formData.entries());
-        
-        try {
-            const url = {% if modo == 'edicion' %}
-                `/editar_registro/{{ registro.id }}`
-            {% else %}
-                '/guardar'
-            {% endif %};
-            
-            const response = await fetch(url, {S
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(datos)
-            });
-            
-            const result = await response.json();
-            
-            if (result.success) {
-                alert(result.message);
-                if (confirm('¿Desea ver el dashboard con los resultados?')) {
-                    window.location.href = '/dashboard/';
-                } else {
-                    window.location.href = '/admin';
-                }
-            } else {
-                alert('Error: ' + result.error);
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            alert('Error al procesar la solicitud');
-        }
-    });
-});
-</script>
+<!-- El manejo del formulario offline se hace en offline.js -->
 {% endblock %} 

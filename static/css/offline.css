@@ -1,0 +1,133 @@
+/* Estilos para funcionalidad offline */
+
+.connection-status-bar {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid #dee2e6;
+    padding: 0.5rem 0;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.connection-status-online {
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+}
+
+.connection-status-offline {
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+}
+
+.pending-counter {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+.offline-indicator {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #f8d7da;
+    color: #721c24;
+    padding: 10px 15px;
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    display: none;
+    z-index: 1001;
+}
+
+.offline-indicator.show {
+    display: block;
+    animation: slideIn 0.3s ease-in-out;
+}
+
+@keyframes slideIn {
+    from { transform: translateX(100%); }
+    to { transform: translateX(0); }
+}
+
+.sync-button-loading {
+    pointer-events: none;
+    opacity: 0.6;
+}
+
+.draft-item {
+    border-left: 4px solid #ffc107;
+    background-color: #fff3cd;
+    margin-bottom: 0.5rem;
+}
+
+.draft-item:hover {
+    background-color: #ffeaa7;
+    cursor: pointer;
+}
+
+.form-offline-controls {
+    position: sticky;
+    top: 60px;
+    z-index: 999;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    margin-bottom: 1rem;
+}
+
+.btn-save-draft {
+    background: linear-gradient(45deg, #ffc107, #ff8f00);
+    border: none;
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.btn-save-draft:hover {
+    background: linear-gradient(45deg, #ff8f00, #ffc107);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.notification-custom {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1002;
+    max-width: 300px;
+    animation: slideInRight 0.3s ease;
+}
+
+@keyframes slideInRight {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+.connection-badge {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+}
+
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    display: none;
+}
+
+.loading-overlay.show {
+    display: flex;
+} 

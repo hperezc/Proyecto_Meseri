@@ -120,9 +120,11 @@ def create_layout():
                         html.Label("Rango de Fechas", className="fw-bold mb-2"),
                         dcc.DatePickerRange(
                             id='date-range',
-                            start_date=(datetime.now() - timedelta(days=30)).date(),
-                            end_date=datetime.now().date(),
-                            className="mb-3"
+                            start_date=None,
+                            end_date=None,
+                            className="mb-3",
+                            start_date_placeholder_text="Fecha inicio",
+                            end_date_placeholder_text="Fecha fin"
                         )
                     ], md=4)
                 ], className="g-3")
