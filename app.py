@@ -493,6 +493,143 @@ def debug_data():
         })
     return jsonify(data)
 
+@app.route('/exportar_dashboard', methods=['POST'])
+def exportar_dashboard():
+    try:
+        # Obtener filtros del request
+        data = request.get_json()
+        selected_centrales = data.get('centrales', 'all')
+        selected_infras = data.get('infraestructuras', 'all')
+        start_date = data.get('start_date')
+        end_date = data.get('end_date')
+        
+        print(f"Debug Dashboard Export - Centrales: {selected_centrales}")
+        print(f"Debug Dashboard Export - Infraestructuras: {selected_infras}")
+        print(f"Debug Dashboard Export - Fechas: {start_date} - {end_date}")
+        
+        # Consulta base - usar la misma lógica que el dashboard
+        query = Infraestructura.query
+        
+        # Filtro de centrales
+        if selected_centrales and selected_centrales != 'all':
+            if isinstance(selected_centrales, list) and 'all' not in selected_centrales:
+                query = query.filter(Infraestructura.central.in_(selected_centrales))
+            elif isinstance(selected_centrales, str) and selected_centrales != 'all':
+                query = query.filter(Infraestructura.central == selected_centrales)
+        
+        # Filtro de infraestructuras
+        if selected_infras and selected_infras != 'all':
+            if isinstance(selected_infras, list) and 'all' not in selected_infras:
+                query = query.filter(Infraestructura.nombre.in_(selected_infras))
+            elif isinstance(selected_infras, str) and selected_infras != 'all':
+                query = query.filter(Infraestructura.nombre == selected_infras)
+        
+        # Filtros de fecha
+        if start_date:
+            query = query.filter(Infraestructura.fecha >= start_date)
+        if end_date:
+            query = query.filter(Infraestructura.fecha <= end_date)
+        
+        infraestructuras = query.all()
+        print(f"Debug Dashboard Export - Registros encontrados: {len(infraestructuras)}")
+        
+        if not infraestructuras:
+            return jsonify({
+                'success': False,
+                'error': 'No se encontraron registros con los filtros aplicados'
+            }), 404
+        
+        # Importar funciones de cálculo
+        from dashboard.calculations import calculate_meseri_score
+        from dashboard.risk_categories import get_epm_risk_level
+        import pandas as pd
+        from io import BytesIO
+        
+        # Preparar datos para Excel
+        resumen_data = []
+        for infra in infraestructuras:
+            try:
+                infra_data = infra.to_dict()
+                score = calculate_meseri_score(infra_data)
+                resumen_data.append({
+                    'Central': infra_data['central'],
+                    'Infraestructura': infra_data['nombre'],
+                    'Fecha': infra_data['fecha'],
+                    'Factores Agravantes (X)': score['x'],
+                    'Factores Protectores (Y)': score['y'],
+                    'Valoración Final (P)': score['p'],
+                    'Nivel de Riesgo Meseri': score['risk_level'],
+                    'Categoría de Riesgo EPM': get_epm_risk_level(score['p'])
+                })
+            except Exception as e:
+                print(f"Error procesando infraestructura {infra.id}: {e}")
+                continue
+        
+        if not resumen_data:
+            return jsonify({
+                'success': False,
+                'error': 'Error al procesar los datos'
+            }), 500
+        
+        # Crear Excel
+        output = BytesIO()
+        with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
+            df_resumen = pd.DataFrame(resumen_data)
+            df_resumen.to_excel(writer, sheet_name='Resumen Dashboard', index=False)
+            
+            # Formatear la hoja
+            workbook = writer.book
+            worksheet = writer.sheets['Resumen Dashboard']
+            
+            # Formato para headers
+            header_format = workbook.add_format({
+                'bold': True,
+                'text_wrap': True,
+                'valign': 'top',
+                'fg_color': '#1e3d59',
+                'font_color': 'white',
+                'border': 1
+            })
+            
+            # Aplicar formato a headers
+            for col_num, value in enumerate(df_resumen.columns.values):
+                worksheet.write(0, col_num, value, header_format)
+            
+            # Ajustar ancho de columnas
+            worksheet.set_column('A:A', 15)  # Central
+            worksheet.set_column('B:B', 25)  # Infraestructura
+            worksheet.set_column('C:C', 12)  # Fecha
+            worksheet.set_column('D:G', 10)  # Valores numéricos
+            worksheet.set_column('H:I', 15)  # Niveles de riesgo
+        
+        output.seek(0)
+        
+        # Generar nombre de archivo descriptivo
+        filter_info = ""
+        if selected_centrales and selected_centrales != 'all':
+            if isinstance(selected_centrales, list):
+                filter_info += f"_centrales_{len(selected_centrales)}"
+            else:
+                filter_info += f"_central"
+        
+        filename = f"dashboard_meseri{filter_info}_{datetime.now().strftime('%Y%m%d_%H%M')}.xlsx"
+        
+        return send_file(
+            output,
+            mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            as_attachment=True,
+            download_name=filename
+        )
+        
+    except Exception as e:
+        print(f"Error en exportar_dashboard: {str(e)}")
+        import traceback
+        print(f"Traceback: {traceback.format_exc()}")
+        return jsonify({
+            'success': False,
+            'error': f'Error interno del servidor: {str(e)}'
+        }), 500
+
 if __name__ == '__main__':
     init_db()
     test_db_connection()

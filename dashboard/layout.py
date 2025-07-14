@@ -314,12 +314,66 @@ def create_layout():
                                 html.I(className="fas fa-info-circle ms-2", id="table-info"),
                             ], width=8),
                             dbc.Col([
-                                dbc.Button(
-                                    [html.I(className="fas fa-file-excel me-2"), "Exportar Excel"],
-                                    id="export-button",
-                                    color="success",
-                                    className="float-end"
-                                ),
+                                dbc.Row([
+                                    dbc.Col([
+                                        dbc.Button(
+                                            [html.I(className="fas fa-file-excel me-2"), "Exportar Excel Completo"],
+                                            id="export-button",
+                                            color="success",
+                                            className="w-100",
+                                            style={
+                                                'fontWeight': 'bold',
+                                                'borderRadius': '8px',
+                                                'boxShadow': '0 2px 4px rgba(0,0,0,0.1)',
+                                                'fontSize': '0.9rem'
+                                            }
+                                        ),
+                                        dbc.Tooltip(
+                                            "Exporta un archivo Excel completo con hojas detalladas para cada infraestructura, incluyendo todos los parámetros y cálculos.",
+                                            target="export-button",
+                                            placement="top",
+                                            style={
+                                                'backgroundColor': 'white',
+                                                'color': '#1e3d59',
+                                                'fontSize': '0.8rem',
+                                                'padding': '6px 10px',
+                                                'borderRadius': '4px',
+                                                'boxShadow': '0 2px 4px rgba(0,0,0,0.1)',
+                                                'maxWidth': '250px'
+                                            }
+                                        )
+                                    ], xs=12, sm=12, md=6, lg=6, className="mb-2 mb-md-0 pe-md-1"),
+                                    dbc.Col([
+                                        dbc.Button(
+                                            [html.I(className="fas fa-chart-bar me-2"), "Exportar Resumen"],
+                                            id="export-alt-button",
+                                            color="info",
+                                            className="w-100",
+                                            style={
+                                                'fontWeight': 'bold',
+                                                'borderRadius': '8px',
+                                                'boxShadow': '0 2px 4px rgba(0,0,0,0.1)',
+                                                'backgroundColor': '#17a2b8',
+                                                'borderColor': '#17a2b8',
+                                                'fontSize': '0.9rem'
+                                            }
+                                        ),
+                                        dbc.Tooltip(
+                                            "Exporta un archivo Excel con resumen ejecutivo mostrando solo los resultados principales de cada infraestructura.",
+                                            target="export-alt-button",
+                                            placement="top",
+                                            style={
+                                                'backgroundColor': 'white',
+                                                'color': '#1e3d59',
+                                                'fontSize': '0.8rem',
+                                                'padding': '6px 10px',
+                                                'borderRadius': '4px',
+                                                'boxShadow': '0 2px 4px rgba(0,0,0,0.1)',
+                                                'maxWidth': '250px'
+                                            }
+                                        )
+                                    ], xs=12, sm=12, md=6, lg=6, className="ps-md-1")
+                                ], className="g-2 g-md-0"),
                                 dcc.Download(id='download-dataframe-xlsx')
                             ], width=4)
                         ])

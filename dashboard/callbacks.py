@@ -221,159 +221,286 @@ def init_callbacks(app, db, Infraestructura):
         
         with current_app.app_context():
             try:
+                print(f"Debug Export - Selected centrales: {selected_centrales}")
+                print(f"Debug Export - Selected infras: {selected_infras}")
+                print(f"Debug Export - Start date: {start_date}")
+                print(f"Debug Export - End date: {end_date}")
+                
+                # Consulta base - usar la misma lógica que update_dashboard
                 query = Infraestructura.query
                 
-                # Aplicar filtros
+                # Filtro de centrales - misma lógica que update_dashboard
                 if selected_centrales and selected_centrales != 'all':
                     if isinstance(selected_centrales, list) and 'all' not in selected_centrales:
                         query = query.filter(Infraestructura.central.in_(selected_centrales))
+                    elif isinstance(selected_centrales, str) and selected_centrales != 'all':
+                        query = query.filter(Infraestructura.central == selected_centrales)
                 
+                # Filtro de infraestructuras - ESTO FALTABA en la versión anterior
+                if selected_infras and selected_infras != 'all':
+                    if isinstance(selected_infras, list) and 'all' not in selected_infras:
+                        query = query.filter(Infraestructura.nombre.in_(selected_infras))
+                    elif isinstance(selected_infras, str) and selected_infras != 'all':
+                        query = query.filter(Infraestructura.nombre == selected_infras)
+                
+                # Filtros de fecha - ESTO TAMBIÉN FALTABA
+                if start_date:
+                    query = query.filter(Infraestructura.fecha >= start_date)
+                if end_date:
+                    query = query.filter(Infraestructura.fecha <= end_date)
+                
+                # Ejecutar la consulta
                 infraestructuras = query.all()
+                print(f"Debug Export - Number of infrastructures found: {len(infraestructuras)}")
+                
+                if not infraestructuras:
+                    # Retornar un archivo vacío con mensaje
+                    output = io.BytesIO()
+                    with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
+                        empty_df = pd.DataFrame([{'Mensaje': 'No se encontraron registros con los filtros aplicados'}])
+                        empty_df.to_excel(writer, sheet_name='Sin Datos', index=False)
+                    output.seek(0)
+                    return dcc.send_bytes(output.getvalue(), 
+                                        f"registros_meseri_sin_datos_{datetime.now().strftime('%Y%m%d_%H%M')}.xlsx")
                 
                 output = io.BytesIO()
                 with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
-                    # Hoja de resumen
+                    # Hoja de resumen con datos filtrados
                     resumen_data = []
                     for infra in infraestructuras:
-                        data = infra.to_dict()
-                        score = calculate_meseri_score(data)
-                        resumen_data.append({
-                            'Central': data['central'],
-                            'Infraestructura': data['nombre'],
-                            'Fecha': data['fecha'],
-                            'Factores Agravantes (X)': score['x'],
-                            'Factores Protectores (Y)': score['y'],
-                            'Valoración Final (P)': score['p'],
-                            'Nivel de Riesgo Meseri': score['risk_level'],
-                            'Categoría de Riesgo EPM': get_epm_risk_level(score['p'])
-                        })
+                        try:
+                            data = infra.to_dict()
+                            score = calculate_meseri_score(data)
+                            resumen_data.append({
+                                'Central': data['central'],
+                                'Infraestructura': data['nombre'],
+                                'Fecha': data['fecha'],
+                                'Factores Agravantes (X)': score['x'],
+                                'Factores Protectores (Y)': score['y'],
+                                'Valoración Final (P)': score['p'],
+                                'Nivel de Riesgo Meseri': score['risk_level'],
+                                'Categoría de Riesgo EPM': get_epm_risk_level(score['p'])
+                            })
+                        except Exception as e:
+                            print(f"Error processing infrastructure {infra.id}: {e}")
+                            continue
                     
-                    df_resumen = pd.DataFrame(resumen_data)
-                    df_resumen.to_excel(writer, sheet_name='Resumen', index=False)
-                    
-                    # Hojas individuales para cada infraestructura
-                    for infra in infraestructuras:
-                        data = infra.to_dict()
-                        score = calculate_meseri_score(data)
+                    if resumen_data:
+                        df_resumen = pd.DataFrame(resumen_data)
+                        df_resumen.to_excel(writer, sheet_name='Resumen', index=False)
                         
-                        parametros = {
-                            'Parámetro': [],
-                            'Valor': [],
-                            'Peso': []
-                        }
-                        
-                        # Construcción
-                        parametros['Parámetro'].extend(['Número de Pisos', 'Superficie Mayor Sector', 
-                                                      'Resistencia al Fuego', 'Falsos Techos'])
-                        parametros['Valor'].extend([data['numero_pisos'], data['superficie_mayor_sector'],
-                                                 data['resistencia_fuego'], data['falsos_techos']])
-                        parametros['Peso'].extend([
-                            get_construction_weight('numero_pisos', data['numero_pisos']),
-                            get_construction_weight('superficie_mayor_sector', data['superficie_mayor_sector']),
-                            get_construction_weight('resistencia_fuego', data['resistencia_fuego']),
-                            get_construction_weight('falsos_techos', data['falsos_techos'])
-                        ])
-                        
-                        # Situación
-                        parametros['Parámetro'].extend(['Distancia Bomberos', 'Accesibilidad Edificio'])
-                        parametros['Valor'].extend([data['distancia_bomberos'], data['accesibilidad_edificio']])
-                        parametros['Peso'].extend([
-                            get_situation_weight('distancia_bomberos', data['distancia_bomberos']),
-                            get_situation_weight('accesibilidad_edificio', data['accesibilidad_edificio'])
-                        ])
-                        
-                        # Procesos
-                        parametros['Parámetro'].extend(['Peligro de Activación', 'Carga de Fuego', 'Inflamabilidad',
-                                                      'Orden y Limpieza', 'Almacenamiento en Altura'])
-                        parametros['Valor'].extend([data['peligro_activacion'], data['carga_fuego'],
-                                                 data['combustibilidad'], data['orden_limpieza'],
-                                                 data['almacenamiento_altura']])
-                        parametros['Peso'].extend([
-                            get_process_weight('peligro_activacion', data['peligro_activacion']),
-                            get_process_weight('carga_fuego', data['carga_fuego']),
-                            get_process_weight('combustibilidad', data['combustibilidad']),
-                            get_process_weight('orden_limpieza', data['orden_limpieza']),
-                            get_process_weight('almacenamiento_altura', data['almacenamiento_altura'])
-                        ])
-                        
-                        # Concentración
-                        parametros['Parámetro'].extend(['Concentración de Valores'])
-                        parametros['Valor'].extend([data['concentracion_valores']])
-                        parametros['Peso'].extend([
-                            get_concentration_weight('concentracion_valores', data['concentracion_valores'])
-                        ])
-                        
-                        # Propagabilidad
-                        parametros['Parámetro'].extend(['Propagabilidad Vertical', 'Propagabilidad Horizontal'])
-                        parametros['Valor'].extend([data['propagabilidad_vertical'], data['propagabilidad_horizontal']])
-                        parametros['Peso'].extend([
-                            get_propagability_weight('propagabilidad_vertical', data['propagabilidad_vertical']),
-                            get_propagability_weight('propagabilidad_horizontal', data['propagabilidad_horizontal'])
-                        ])
-                        
-                        # Destructibilidad
-                        parametros['Parámetro'].extend(['Por Calor', 'Por Humo', 'Por Corrosión', 'Por Agua'])
-                        parametros['Valor'].extend([data['por_calor'], data['por_humo'], 
-                                                 data['por_corrosion'], data['por_agua']])
-                        parametros['Peso'].extend([
-                            get_destructibility_weight('por_calor', data['por_calor']),
-                            get_destructibility_weight('por_humo', data['por_humo']),
-                            get_destructibility_weight('por_corrosion', data['por_corrosion']),
-                            get_destructibility_weight('por_agua', data['por_agua'])
-                        ])
-                        
-                        # Protección
-                        parametros['Parámetro'].extend([
-                            'Extintores Portátiles', 'Gabinetes/Tomas de mangueras', 'Hidrantes Exteriores',
-                            'Detección Automática', 'Rociadores Automáticos', 
-                            'Equipos Primera Intervención', 'Equipos Segunda Intervención',
-                            'Planes de Emergencia'
-                        ])
-                        parametros['Valor'].extend([
-                            data['extintores_portatiles'], data['bocas_incendio'],
-                            data['hidrantes_exteriores'], data['deteccion_automatica'],
-                            data['rociadores_automaticos'], data['equipos_primera_intervencion'],
-                            data['equipos_segunda_intervencion'], data['planes_emergencia']
-                        ])
-                        parametros['Peso'].extend([
-                            get_protection_weight('extintores_portatiles', data['extintores_portatiles']),
-                            get_protection_weight('bocas_incendio', data['bocas_incendio']),
-                            get_protection_weight('hidrantes_exteriores', data['hidrantes_exteriores']),
-                            get_protection_weight('deteccion_automatica', data['deteccion_automatica']),
-                            get_protection_weight('rociadores_automaticos', data['rociadores_automaticos']),
-                            get_protection_weight('equipos_primera_intervencion', data['equipos_primera_intervencion']),
-                            get_protection_weight('equipos_segunda_intervencion', data['equipos_segunda_intervencion']),
-                            get_protection_weight('planes_emergencia', data['planes_emergencia'])
-                        ])
-                        
-                        # Agregar totales
-                        parametros['Parámetro'].extend([
-                            'Total Factores Agravantes (X)', 
-                            'Total Factores Protectores (Y)',
-                            'Valoración Final (P)', 
-                            'Nivel de Riesgo Meseri',
-                            'Categoría de Riesgo EPM'
-                        ])
-                        parametros['Valor'].extend([
-                            score['x'], 
-                            score['y'], 
-                            score['p'], 
-                            score['risk_level'],
-                            get_epm_risk_level(score['p'])
-                        ])
-                        parametros['Peso'].extend(['-', '-', '-', '-', '-'])
-                        
-                        df_infra = pd.DataFrame(parametros)
-                        sheet_name = f"{data['central']}_{data['nombre']}"[:31]
-                        df_infra.to_excel(writer, sheet_name=sheet_name, index=False)
-                    
+                        # Hojas individuales para cada infraestructura
+                        for infra in infraestructuras:
+                            try:
+                                data = infra.to_dict()
+                                score = calculate_meseri_score(data)
+                                
+                                parametros = {
+                                    'Parámetro': [],
+                                    'Valor': [],
+                                    'Peso': []
+                                }
+                                
+                                # Construcción
+                                parametros['Parámetro'].extend(['Número de Pisos', 'Superficie Mayor Sector', 
+                                                              'Resistencia al Fuego', 'Falsos Techos'])
+                                parametros['Valor'].extend([data['numero_pisos'], data['superficie_mayor_sector'],
+                                                         data['resistencia_fuego'], data['falsos_techos']])
+                                parametros['Peso'].extend([
+                                    get_construction_weight('numero_pisos', data['numero_pisos']),
+                                    get_construction_weight('superficie_mayor_sector', data['superficie_mayor_sector']),
+                                    get_construction_weight('resistencia_fuego', data['resistencia_fuego']),
+                                    get_construction_weight('falsos_techos', data['falsos_techos'])
+                                ])
+                                
+                                # Situación
+                                parametros['Parámetro'].extend(['Distancia Bomberos', 'Accesibilidad Edificio'])
+                                parametros['Valor'].extend([data['distancia_bomberos'], data['accesibilidad_edificio']])
+                                parametros['Peso'].extend([
+                                    get_situation_weight('distancia_bomberos', data['distancia_bomberos']),
+                                    get_situation_weight('accesibilidad_edificio', data['accesibilidad_edificio'])
+                                ])
+                                
+                                # Procesos
+                                parametros['Parámetro'].extend(['Peligro de Activación', 'Carga de Fuego', 'Inflamabilidad',
+                                                              'Orden y Limpieza', 'Almacenamiento en Altura'])
+                                parametros['Valor'].extend([data['peligro_activacion'], data['carga_fuego'],
+                                                         data['combustibilidad'], data['orden_limpieza'],
+                                                         data['almacenamiento_altura']])
+                                parametros['Peso'].extend([
+                                    get_process_weight('peligro_activacion', data['peligro_activacion']),
+                                    get_process_weight('carga_fuego', data['carga_fuego']),
+                                    get_process_weight('combustibilidad', data['combustibilidad']),
+                                    get_process_weight('orden_limpieza', data['orden_limpieza']),
+                                    get_process_weight('almacenamiento_altura', data['almacenamiento_altura'])
+                                ])
+                                
+                                # Concentración
+                                parametros['Parámetro'].extend(['Concentración de Valores'])
+                                parametros['Valor'].extend([data['concentracion_valores']])
+                                parametros['Peso'].extend([
+                                    get_concentration_weight('concentracion_valores', data['concentracion_valores'])
+                                ])
+                                
+                                # Propagabilidad
+                                parametros['Parámetro'].extend(['Propagabilidad Vertical', 'Propagabilidad Horizontal'])
+                                parametros['Valor'].extend([data['propagabilidad_vertical'], data['propagabilidad_horizontal']])
+                                parametros['Peso'].extend([
+                                    get_propagability_weight('propagabilidad_vertical', data['propagabilidad_vertical']),
+                                    get_propagability_weight('propagabilidad_horizontal', data['propagabilidad_horizontal'])
+                                ])
+                                
+                                # Destructibilidad
+                                parametros['Parámetro'].extend(['Por Calor', 'Por Humo', 'Por Corrosión', 'Por Agua'])
+                                parametros['Valor'].extend([data['por_calor'], data['por_humo'], 
+                                                         data['por_corrosion'], data['por_agua']])
+                                parametros['Peso'].extend([
+                                    get_destructibility_weight('por_calor', data['por_calor']),
+                                    get_destructibility_weight('por_humo', data['por_humo']),
+                                    get_destructibility_weight('por_corrosion', data['por_corrosion']),
+                                    get_destructibility_weight('por_agua', data['por_agua'])
+                                ])
+                                
+                                # Protección
+                                parametros['Parámetro'].extend([
+                                    'Extintores Portátiles', 'Gabinetes/Tomas de mangueras', 'Hidrantes Exteriores',
+                                    'Detección Automática', 'Rociadores Automáticos', 
+                                    'Equipos Primera Intervención', 'Equipos Segunda Intervención',
+                                    'Planes de Emergencia'
+                                ])
+                                parametros['Valor'].extend([
+                                    data['extintores_portatiles'], data['bocas_incendio'],
+                                    data['hidrantes_exteriores'], data['deteccion_automatica'],
+                                    data['rociadores_automaticos'], data['equipos_primera_intervencion'],
+                                    data['equipos_segunda_intervencion'], data['planes_emergencia']
+                                ])
+                                parametros['Peso'].extend([
+                                    get_protection_weight('extintores_portatiles', data['extintores_portatiles']),
+                                    get_protection_weight('bocas_incendio', data['bocas_incendio']),
+                                    get_protection_weight('hidrantes_exteriores', data['hidrantes_exteriores']),
+                                    get_protection_weight('deteccion_automatica', data['deteccion_automatica']),
+                                    get_protection_weight('rociadores_automaticos', data['rociadores_automaticos']),
+                                    get_protection_weight('equipos_primera_intervencion', data['equipos_primera_intervencion']),
+                                    get_protection_weight('equipos_segunda_intervencion', data['equipos_segunda_intervencion']),
+                                    get_protection_weight('planes_emergencia', data['planes_emergencia'])
+                                ])
+                                
+                                # Agregar totales
+                                parametros['Parámetro'].extend([
+                                    'Total Factores Agravantes (X)', 
+                                    'Total Factores Protectores (Y)',
+                                    'Valoración Final (P)', 
+                                    'Nivel de Riesgo Meseri',
+                                    'Categoría de Riesgo EPM'
+                                ])
+                                parametros['Valor'].extend([
+                                    score['x'], 
+                                    score['y'], 
+                                    score['p'], 
+                                    score['risk_level'],
+                                    get_epm_risk_level(score['p'])
+                                ])
+                                parametros['Peso'].extend(['-', '-', '-', '-', '-'])
+                                
+                                df_infra = pd.DataFrame(parametros)
+                                # Limpiar el nombre de la hoja para Excel
+                                sheet_name = f"{data['central']}_{data['nombre']}"
+                                sheet_name = sheet_name.replace('/', '_').replace('\\', '_').replace('*', '_').replace('?', '_').replace('[', '_').replace(']', '_')
+                                sheet_name = sheet_name[:31]  # Excel limita a 31 caracteres
+                                df_infra.to_excel(writer, sheet_name=sheet_name, index=False)
+                            except Exception as e:
+                                print(f"Error creating sheet for infrastructure {infra.id}: {e}")
+                                continue
+                
                 output.seek(0)
-                return dcc.send_bytes(output.getvalue(), 
-                                    f"registros_meseri_{datetime.now().strftime('%Y%m%d')}.xlsx")
+                
+                # Generar nombre de archivo más descriptivo
+                filter_description = ""
+                if selected_centrales and selected_centrales != 'all':
+                    if isinstance(selected_centrales, list):
+                        filter_description += f"_centrales_{len(selected_centrales)}"
+                    else:
+                        filter_description += f"_central_{selected_centrales}"
+                
+                if selected_infras and selected_infras != 'all':
+                    if isinstance(selected_infras, list):
+                        filter_description += f"_infras_{len(selected_infras)}"
+                    else:
+                        filter_description += f"_infra"
+                
+                filename = f"meseri_dashboard{filter_description}_{datetime.now().strftime('%Y%m%d_%H%M')}.xlsx"
+                
+                return dcc.send_bytes(output.getvalue(), filename)
                 
             except Exception as e:
                 print(f"Error en export_dashboard_data: {str(e)}")
-                return None
+                print(f"Traceback: {traceback.format_exc()}")
+                # En caso de error, crear archivo con mensaje de error
+                try:
+                    output = io.BytesIO()
+                    with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
+                        error_df = pd.DataFrame([{
+                            'Error': f'Error en la exportación: {str(e)}',
+                            'Filtros': f'Centrales: {selected_centrales}, Infras: {selected_infras}, Fechas: {start_date} - {end_date}'
+                        }])
+                        error_df.to_excel(writer, sheet_name='Error', index=False)
+                    output.seek(0)
+                    return dcc.send_bytes(output.getvalue(), f"error_export_{datetime.now().strftime('%Y%m%d_%H%M')}.xlsx")
+                except:
+                    return None
+
+    # Callback para botón de exportación alternativo usando clientside callback
+    app.clientside_callback(
+        """
+        function(n_clicks, centrales, infras, start_date, end_date) {
+            if (n_clicks) {
+                const exportData = {
+                    centrales: centrales,
+                    infraestructuras: infras,
+                    start_date: start_date,
+                    end_date: end_date
+                };
+                
+                fetch('/exportar_dashboard', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(exportData)
+                })
+                .then(response => {
+                    if (response.ok) {
+                        return response.blob();
+                    } else {
+                        throw new Error('Error en la exportación');
+                    }
+                })
+                .then(blob => {
+                    const url = window.URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = 'dashboard_meseri_' + new Date().toISOString().slice(0,10) + '.xlsx';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    window.URL.revokeObjectURL(url);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error al exportar el archivo. Por favor, intente nuevamente.');
+                });
+            }
+            return null;
+        }
+        """,
+        Output('export-alt-button', 'style'),
+        [Input('export-alt-button', 'n_clicks')],
+        [State('central-filter', 'value'),
+         State('infra-filter', 'value'),
+         State('date-range', 'start_date'),
+         State('date-range', 'end_date')],
+        prevent_initial_call=True
+    )
 
 def create_gauge_chart(df):
     fig = go.Figure(go.Indicator(
