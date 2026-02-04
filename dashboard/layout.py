@@ -46,7 +46,7 @@ def create_layout():
             ),
             dbc.Col(
                 [
-                    html.Img(src="/static/img/logo-cruz-roja.png", height="60px", className="header-logo")
+                    html.Img(src="/meseri/static/img/logo-cruz-roja.png", height="60px", className="header-logo")
                 ],
                 width=12,
                 className="d-flex align-items-center justify-content-center mt-3"

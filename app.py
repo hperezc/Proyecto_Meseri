@@ -427,7 +427,8 @@ def init_dashboard(server):
         dash_app = Dash(
             __name__,
             server=server,
-            url_base_pathname='/dashboard/',
+            routes_pathname_prefix='/dashboard/', requests_pathname_prefix='/meseri/dashboard/',
+            external_scripts=['https://cdn.plot.ly/plotly-3.3.1.min.js'],
             external_stylesheets=[dbc.themes.BOOTSTRAP]
         )
         
@@ -439,7 +440,7 @@ def init_dashboard(server):
             <title>Dashboard MESERI</title>
             {%css%}
             <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-            <link rel="stylesheet" href="/static/css/styles.css">
+            <link rel="stylesheet" href="/meseri/static/css/styles.css">
             <style>
                 .dash-container {
                     padding: 2rem 1rem;

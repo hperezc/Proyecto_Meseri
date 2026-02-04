@@ -27,7 +27,7 @@
             </div>
             <div class="navbar-nav ms-auto">
                 <a class="nav-link" href="{{ url_for('index') }}">Inicio</a>
-                <a class="nav-link" href="/dashboard/">Dashboard</a>
+                <a class="nav-link" href="/meseri/dashboard/">Dashboard</a>
                 {% if session.get('logged_in') %}
                     <a class="nav-link" href="{{ url_for('admin_panel') }}">Admin</a>
                     <a class="nav-link" href="{{ url_for('logout') }}">Cerrar Sesión</a>
